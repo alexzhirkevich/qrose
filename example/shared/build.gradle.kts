@@ -4,12 +4,26 @@ plugins {
     id("org.jetbrains.compose")
 }
 
-@OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
-kotlin {
-    targetHierarchy.default()
+val _jvmTarget = findProperty("jvmTarget") as String
 
-    jvm()
-    androidTarget()
+//@OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+kotlin {
+//    targetHierarchy.default()
+
+    jvm("desktop"){
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = _jvmTarget
+            }
+        }
+    }
+    androidTarget(){
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = _jvmTarget
+            }
+        }
+    }
     js(IR){
         browser()
     }
@@ -28,6 +42,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":qrose"))
+//                implementation("io.github.alexzhirkevich:qrose:1.0.0-beta02")
                 implementation(compose.ui)
                 implementation(compose.runtime)
                 implementation(compose.material3)
@@ -46,6 +61,11 @@ android {
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.toVersion(_jvmTarget)
+        targetCompatibility = JavaVersion.toVersion(_jvmTarget)
+    }
 
     defaultConfig {
         minSdk = 24

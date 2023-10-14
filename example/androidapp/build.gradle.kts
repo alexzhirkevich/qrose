@@ -4,6 +4,8 @@ plugins {
     id("org.jetbrains.compose")
 }
 
+val _jvmTarget = findProperty("jvmTarget") as String
+
 android {
     namespace = "io.github.alexzhirkevich.qrose.example.android"
     compileSdk = 34
@@ -19,11 +21,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.toVersion(_jvmTarget)
+        targetCompatibility = JavaVersion.toVersion(_jvmTarget)
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = _jvmTarget
+    }
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
 }
 

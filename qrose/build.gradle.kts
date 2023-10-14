@@ -12,25 +12,43 @@ plugins {
 group = "io.github.alexzhirkevich"
 version = libs.versions.qrose.get()
 
+val _jvmTarget = findProperty("jvmTarget") as String
+
 kotlin {
-    androidTarget()
+    androidTarget{
+        publishLibraryVariants("release")
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = _jvmTarget
+            }
+        }
+    }
     ios()
     iosSimulatorArm64()
     js(IR){
         browser()
     }
-    jvm()
+    jvm("desktop"){
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = _jvmTarget
+            }
+        }
+    }
 
     macosArm64()
     macosX64()
 
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(compose.ui)
-            }
-        }
+    sourceSets["commonMain"].dependencies {
+        implementation(compose.ui)
     }
+//    sourceSets {
+//        val commonMain by getting {
+//            dependencies {
+//                implementation(compose.ui)
+//            }
+//        }
+//    }
 }
 
 android {
@@ -39,6 +57,12 @@ android {
     defaultConfig {
         minSdk = 21
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.toVersion(_jvmTarget)
+        targetCompatibility = JavaVersion.toVersion(_jvmTarget)
+    }
+
 }
 
 //ext["signing.keyId"] = null

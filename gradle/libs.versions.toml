@@ -2,7 +2,7 @@
 kotlin="1.9.10"
 compose="1.5.3"
 androidGradlePlugin = "8.1.1"
-qrose = "1.0.0-beta01"
+qrose = "1.0.0-beta02"
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }

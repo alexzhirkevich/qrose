@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ComposeQR">
         <activity
-            android:name="io.alexzhirkevich.qrose.example.android.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.ComposeQR">
             <intent-filter>

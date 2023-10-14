@@ -55,7 +55,7 @@ interface QrBrush  {
     /**
      * Factory method of the [Brush] for the element with given [size] and [neighbors].
      * */
-    fun makeBrush(size: Float, neighbors: Neighbors): Brush
+    fun brush(size: Float, neighbors: Neighbors): Brush
 
     companion object {
 
@@ -152,7 +152,7 @@ private class Image(
     private var cachedBrush: Brush? = null
     private var cachedSize: Int = -1
 
-    override fun makeBrush(size: Float, neighbors: Neighbors): Brush {
+    override fun brush(size: Float, neighbors: Neighbors): Brush {
 
         val intSize = size.toInt()
 
@@ -189,7 +189,7 @@ private class BrushColor(private val builder: (size : Float) -> Brush) : QrBrush
     override val mode: QrBrushMode
         get() = QrBrushMode.Join
 
-    override fun makeBrush(size: Float, neighbors: Neighbors): Brush = this.builder(size)
+    override fun brush(size: Float, neighbors: Neighbors): Brush = this.builder(size)
 }
 
 @Immutable
@@ -213,7 +213,7 @@ private class Random(
 
     override val mode: QrBrushMode = QrBrushMode.Separate
 
-    override fun makeBrush(size: Float, neighbors: Neighbors): Brush {
+    override fun brush(size: Float, neighbors: Neighbors): Brush {
         val random = random.nextFloat() * _probabilities.last().first.endInclusive
 
         val idx = _probabilities.binarySearch {

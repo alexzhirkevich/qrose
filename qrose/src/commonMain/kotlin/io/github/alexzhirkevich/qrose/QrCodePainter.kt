@@ -2,7 +2,6 @@ package io.github.alexzhirkevich.qrose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -46,10 +45,10 @@ import kotlin.math.roundToInt
  * @param options [QrOptions] builder block
  * */
 @Composable
-inline fun rememberQrCodePainter(
+fun rememberQrCodePainter(
     data : String,
     vararg keys : Any?,
-    noinline options : QrOptionsBuilderScope.() -> Unit
+    options : QrOptionsBuilderScope.() -> Unit
 ) : QrCodePainter = rememberQrCodePainter(
     data = data,
     options = remember(keys) { QrOptions(options) }
@@ -62,7 +61,7 @@ inline fun rememberQrCodePainter(
  * @param options QR code styling options
  * */
 @Composable
-inline fun rememberQrCodePainter(
+fun rememberQrCodePainter(
     data : String,
     options : QrOptions
 ) : QrCodePainter = remember(data, options) {
@@ -70,7 +69,7 @@ inline fun rememberQrCodePainter(
 }
 
 @Composable
-inline fun rememberQrCodePainter(
+fun rememberQrCodePainter(
     data : String,
     shapes: QrShapes = QrShapes(),
     colors : QrColors = QrColors(),
@@ -202,7 +201,7 @@ class QrCodePainter(
             drawPath(
                 path = light,
                 brush = options.colors.light
-                    .makeBrush(pixelSize * codeMatrix.size, Neighbors.Empty),
+                    .brush(pixelSize * codeMatrix.size, Neighbors.Empty),
             )
         }
 
@@ -210,7 +209,7 @@ class QrCodePainter(
             drawPath(
                 path = dark,
                 brush = options.colors.dark
-                    .makeBrush(pixelSize * codeMatrix.size, Neighbors.Empty),
+                    .brush(pixelSize * codeMatrix.size, Neighbors.Empty),
             )
         }
 
@@ -601,7 +600,7 @@ class QrCodePainter(
         var number = 0
 
         val factory = {
-            b.makeBrush(
+            b.brush(
                 size = pixelSize,
                 neighbors = Neighbors.forEyeWithNumber(number, options.fourEyed)
             ).also {
@@ -622,11 +621,11 @@ class QrCodePainter(
             pixelSize
         else codeMatrix.size * pixelSize
 
-        val joinBrush by lazy { brush.makeBrush(size, Neighbors.Empty) }
+        val joinBrush by lazy { brush.brush(size, Neighbors.Empty) }
 
         return NeighborsBasedFactory {
             if (separate)
-                brush.makeBrush(size, it)
+                brush.brush(size, it)
             else joinBrush
         }
     }
