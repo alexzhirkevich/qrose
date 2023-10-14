@@ -1,4 +1,14 @@
-# QRose - QR code design library for Compose Multiplatform
+# QRose 
+
+![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
+![badge-JVM](https://img.shields.io/badge/Platform-JVM-orange)
+![badge-macOS](https://img.shields.io/badge/Platform-macOS-purple)
+![badge-web](https://img.shields.io/badge/Platform-Web-blue)
+
+QR code design library for Compose Multiplatform
+
+
 <img width="465" alt="Screenshot 2023-10-10 at 10 34 05" src="https://github.com/alexzhirkevich/qrose/assets/63979218/7469cc1c-d6fd-4dab-997d-f2604dfa49de">
 
 Why QRose?
