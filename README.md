@@ -49,3 +49,16 @@ val qrcodePainter = rememberQrCodePainter("https://example.com") {
     }
 }
 ```
+
+# Customization
+
+You can create your own shapes for each QR code part, for example:
+
+```kotlin
+class MyCircleBallShape : QrBallShape {
+    
+    override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
+        addOval(Rect(0f,0f, size, size))
+    }
+}
+```
