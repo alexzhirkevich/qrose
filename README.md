@@ -1,5 +1,8 @@
 # QRose 
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose)
+
+
 ![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
 ![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
 ![badge-JVM](https://img.shields.io/badge/Platform-JVM-orange)
@@ -21,7 +24,7 @@ Why QRose?
 # Installation
 ```gradle
 dependencies {
-    implementation("io.github.alexzhirkevich:qrose:1.0.0-beta01")
+    implementation("io.github.alexzhirkevich:qrose:1.0.0-beta02")
 }
 ```
 
