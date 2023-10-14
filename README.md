@@ -1,10 +1,51 @@
 # QRose - QR code design library for Compose Multiplatform
+<img width="465" alt="Screenshot 2023-10-10 at 10 34 05" src="https://github.com/alexzhirkevich/qrose/assets/63979218/7469cc1c-d6fd-4dab-997d-f2604dfa49de">
 
 Why QRose?
-- **Lightweight** - doesn't contain any dependencies;
+- **Lightweight** - doesn't contain any dependencies except of `compose.ui`;
 - **Flexible** - high customization ability that is open for extension;
-- **Efficient** - declare and render codes synchronously right from the composition in 60+ fps *;
+- **Efficient** - declare and render codes synchronously right from the composition in 60+ fps;
 - **Scalable** - no raster bitmaps, only scalable vector graphics;
 - **Multiplatform** - supports all the targets supported by Compose Multiplatform.
 
-* - performance depends on platform, device, code size and style complexity.
+# Installation
+```gradle
+dependencies {
+    implementation("io.github.alexzhirkevich:qrose:1.0.0-beta01")
+}
+```
+
+# Usage
+
+You can create code right in composition using `rememberQrCodePainter`.
+Or do it outside of Compose scope by instantiating a `QrCodePainter` class.
+
+There are some overloads of `rememberQrCodePainter` including DSL constructor:
+```kotlin
+val logoPainter = painterResource("logo.png")
+
+val qrcodePainter = rememberQrCodePainter("https://example.com") {
+    logo {
+        painter = logoPainter
+        padding = QrLogoPadding.Natural(.1f)
+        shape = QrLogoShape.circle()
+        size = 0.2f
+    }
+
+    shapes {
+        ball = QrBallShape.circle()
+        darkPixel = QrPixelShape.roundCorners()
+        frame = QrFrameShape.roundCorners(.25f)
+    }
+    colors {
+        dark = QrBrush.brush {
+            Brush.linearGradient(
+                0f to Color.Red,
+                1f to Color.Blue,
+                end = Offset(it, it)
+            )
+        }
+        frame = QrBrush.solid(Color.Black)
+    }
+}
+```
