@@ -86,3 +86,6 @@ class MyCircleBallShape : QrBallShape {
     }
 }
 ```
+> **Note**
+>A path here uses [`PathFillType.EvenOdd`](https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/PathFillType#EvenOdd()) that cannot be changed.
+
