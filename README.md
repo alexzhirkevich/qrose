@@ -63,7 +63,7 @@ val qrcodePainter = rememberQrCodePainter("https://example.com") {
 }
 ```
 
-Or just parametrized contsructor:
+Or just parametrized constructor:
 
 ```kotlin
 val qrcodePainter = rememberQrCodePainter(
