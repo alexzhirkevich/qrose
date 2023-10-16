@@ -63,6 +63,17 @@ val qrcodePainter = rememberQrCodePainter("https://example.com") {
 }
 ```
 
+Or just parametrized contsructor:
+
+```kotlin
+val qrcodePainter = rememberQrCodePainter(
+    data = "https://example.com",
+    shapes = QrShapes(
+        darkPixel = QrPixelShape.roundCorners()
+    )
+)
+```
+
 # Customization
 
 You can create your own shapes for each QR code part, for example:
