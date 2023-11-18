@@ -63,6 +63,17 @@ val qrcodePainter = rememberQrCodePainter("https://example.com") {
 }
 ```
 
+Or just parametrized constructor:
+
+```kotlin
+val qrcodePainter = rememberQrCodePainter(
+    data = "https://example.com",
+    shapes = QrShapes(
+        darkPixel = QrPixelShape.roundCorners()
+    )
+)
+```
+
 # Customization
 
 You can create your own shapes for each QR code part, for example:
@@ -75,3 +86,6 @@ class MyCircleBallShape : QrBallShape {
     }
 }
 ```
+> **Note**
+>A path here uses [`PathFillType.EvenOdd`](https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/PathFillType#EvenOdd()) that cannot be changed.
+
