@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import io.github.alexzhirkevich.qrose.options.QrBrushMode.Separate
+import io.github.alexzhirkevich.qrose.toImageBitmap
 import kotlin.random.Random
 
 enum class QrBrushMode {
@@ -160,19 +161,7 @@ private class Image(
             return cachedBrush!!
         }
 
-        val bmp = ImageBitmap(intSize, intSize)
-        val canvas = Canvas(bmp)
-
-        CanvasDrawScope().draw(
-            density = Density(1f, 1f),
-            layoutDirection = LayoutDirection.Ltr,
-            canvas = canvas,
-            size = Size(size, size)
-        ) {
-            painter.run {
-                draw(this@draw.size, alpha, colorFilter)
-            }
-        }
+        val bmp = painter.toImageBitmap(intSize, intSize, alpha, colorFilter)
 
         cachedBrush = ShaderBrush(ImageShader(bmp, TileMode.Decal, TileMode.Decal))
         cachedSize = intSize

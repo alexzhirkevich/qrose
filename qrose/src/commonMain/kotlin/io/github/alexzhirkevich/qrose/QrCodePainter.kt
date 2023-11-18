@@ -94,19 +94,24 @@ fun rememberQrCodePainter(
  * */
 @Immutable
 class QrCodePainter(
-    private val data : String,
-    private val options: QrOptions,
+    val data : String,
+    val options: QrOptions = QrOptions(),
 ) : Painter() {
 
-    private val initialMatrix = QRCode(
-        data = data,
-        errorCorrectionLevel =
-        if (options.errorCorrectionLevel == QrErrorCorrectionLevel.Auto)
-            options.errorCorrectionLevel.fit(options).lvl
-        else options.errorCorrectionLevel.lvl
-    ).encode()
+    private val initialMatrixSize : Int
 
     private val actualCodeMatrix = options.shapes.code.run {
+
+        val initialMatrix = QRCode(
+            data = data,
+            errorCorrectionLevel =
+            if (options.errorCorrectionLevel == QrErrorCorrectionLevel.Auto)
+                options.errorCorrectionLevel.fit(options).lvl
+            else options.errorCorrectionLevel.lvl
+        ).encode()
+
+        initialMatrixSize = initialMatrix.size
+
         initialMatrix.transform()
     }
 
@@ -117,24 +122,24 @@ class QrCodePainter(
         codeMatrix.size.toFloat() * 10f
     )
 
-    private val shapeIncrease = (codeMatrix.size - initialMatrix.size)/2
+    private val shapeIncrease = (codeMatrix.size - initialMatrixSize)/2
 
     private val balls = mutableListOf(
         2 + shapeIncrease to 2 + shapeIncrease,
-        2 + shapeIncrease to initialMatrix.size - 5 + shapeIncrease,
-        initialMatrix.size - 5 + shapeIncrease to 2 + shapeIncrease
+        2 + shapeIncrease to initialMatrixSize - 5 + shapeIncrease,
+        initialMatrixSize - 5 + shapeIncrease to 2 + shapeIncrease
     ).apply {
         if (options.fourEyed)
-            this += initialMatrix.size - 5 + shapeIncrease to initialMatrix.size - 5 + shapeIncrease
+            this += initialMatrixSize - 5 + shapeIncrease to initialMatrixSize - 5 + shapeIncrease
     }.toList()
 
     private val frames = mutableListOf(
         shapeIncrease to shapeIncrease,
-        shapeIncrease to initialMatrix.size - 7 + shapeIncrease,
-        initialMatrix.size - 7 + shapeIncrease to shapeIncrease
+        shapeIncrease to initialMatrixSize - 7 + shapeIncrease,
+        initialMatrixSize - 7 + shapeIncrease to shapeIncrease
     ).apply {
         if (options.fourEyed) {
-            this += initialMatrix.size - 7 + shapeIncrease to initialMatrix.size - 7 + shapeIncrease
+            this += initialMatrixSize - 7 + shapeIncrease to initialMatrixSize - 7 + shapeIncrease
         }
     }.toList()
 
@@ -475,21 +480,21 @@ class QrCodePainter(
 
     private fun isFrameStart(x: Int, y: Int) =
         x - shapeIncrease == 0 && y - shapeIncrease == 0 ||
-                x - shapeIncrease == 0 && y - shapeIncrease == initialMatrix.size - 7 ||
-                x - shapeIncrease == initialMatrix.size - 7 && y - shapeIncrease == 0 ||
-                options.fourEyed && x - shapeIncrease == initialMatrix.size - 7 && y - shapeIncrease == initialMatrix.size - 7
+                x - shapeIncrease == 0 && y - shapeIncrease == initialMatrixSize - 7 ||
+                x - shapeIncrease == initialMatrixSize - 7 && y - shapeIncrease == 0 ||
+                options.fourEyed && x - shapeIncrease == initialMatrixSize - 7 && y - shapeIncrease == initialMatrixSize - 7
 
     private fun isBallStart(x: Int, y: Int) =
-        x - shapeIncrease == 2 && y - shapeIncrease == initialMatrix.size - 5 ||
-                x - shapeIncrease == initialMatrix.size - 5 && y - shapeIncrease == 2 ||
+        x - shapeIncrease == 2 && y - shapeIncrease ==initialMatrixSize - 5 ||
+                x - shapeIncrease == initialMatrixSize - 5 && y - shapeIncrease == 2 ||
                 x - shapeIncrease == 2 && y - shapeIncrease == 2 ||
-                options.fourEyed && x - shapeIncrease == initialMatrix.size - 5 && y - shapeIncrease == initialMatrix.size - 5
+                options.fourEyed && x - shapeIncrease == initialMatrixSize - 5 && y - shapeIncrease == initialMatrixSize - 5
 
     private fun isInsideFrameOrBall(x: Int, y: Int): Boolean {
         return x - shapeIncrease in -1..7 && y - shapeIncrease in -1..7 ||
-                x - shapeIncrease in -1..7 && y - shapeIncrease in initialMatrix.size - 8 until initialMatrix.size + 1 ||
-                x - shapeIncrease in initialMatrix.size - 8 until initialMatrix.size + 1 && y - shapeIncrease in -1..7 ||
-                options.fourEyed && x - shapeIncrease in initialMatrix.size - 8 until initialMatrix.size + 1 && y - shapeIncrease in initialMatrix.size - 8 until initialMatrix.size + 1
+                x - shapeIncrease in -1..7 && y - shapeIncrease in initialMatrixSize - 8 until initialMatrixSize + 1 ||
+                x - shapeIncrease in initialMatrixSize - 8 until initialMatrixSize + 1 && y - shapeIncrease in -1..7 ||
+                options.fourEyed && x - shapeIncrease in initialMatrixSize - 8 until initialMatrixSize + 1 && y - shapeIncrease in initialMatrixSize - 8 until initialMatrixSize + 1
     }
 
     private fun darkPaintFactory(pixelSize: Float) =

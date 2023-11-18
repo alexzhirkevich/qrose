@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +21,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import io.github.alexzhirkevich.qrose.ImageFormat
+import io.github.alexzhirkevich.qrose.QrCodePainter
+import io.github.alexzhirkevich.qrose.QrData
+import io.github.alexzhirkevich.qrose.email
+import io.github.alexzhirkevich.qrose.options.DelicateQRoseApi
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrCodeShape
@@ -26,6 +33,7 @@ import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
 import io.github.alexzhirkevich.qrose.options.QrFrameShape
 import io.github.alexzhirkevich.qrose.options.QrLogoPadding
 import io.github.alexzhirkevich.qrose.options.QrLogoShape
+import io.github.alexzhirkevich.qrose.options.QrOptions
 import io.github.alexzhirkevich.qrose.options.QrPixelShape
 import io.github.alexzhirkevich.qrose.options.brush
 import io.github.alexzhirkevich.qrose.options.circle
@@ -34,11 +42,11 @@ import io.github.alexzhirkevich.qrose.options.image
 import io.github.alexzhirkevich.qrose.options.roundCorners
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import io.github.alexzhirkevich.qrose.toByteArray
+import io.github.alexzhirkevich.qrose.wifi
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-
-//@DelicateQRoseApi
 @Composable
 fun App() {
 
@@ -46,15 +54,6 @@ fun App() {
         mutableStateOf("https://github.com/alexzhirkevich/qrose")
     }
 
-//    rememberQrCodePainter(text, QrOptions(
-//        shapes = QrShapes(
-//            code = QrCodeShape.hexagon(),
-//            ball = QrBallShape.circle(),
-//            darkPixel = QrPixelShape.roundCorners(),
-//            frame = QrFrameShape.roundCorners(.25f),
-//        ),
-//        fourEyed = true
-//    ))
     val bg = painterResource("jcbg.png")
 
     val logo = painterResource("jc.png")
@@ -84,7 +83,6 @@ fun App() {
         }
     }
 
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -102,14 +100,23 @@ fun App() {
             onValueChange = { text = it }
         )
     }
+
+    QrData.email(
+        email = "example@mail.com",
+        subject = "Mail Subject"
+    )
 }
 
+/**
+ * This is a QR code from README
+ * */
+@OptIn(DelicateQRoseApi::class)
 @Composable
-fun Jc() : Painter {
+fun JetpackCompose(data : String) : Painter {
     val bg = painterResource("jcbg.png")
     val logo = painterResource("jc.png")
 
-    return rememberQrCodePainter("https://github.com/alexzhirkevich/qrose") {
+    return rememberQrCodePainter(data) {
         fourEyed = true
 
         logo {

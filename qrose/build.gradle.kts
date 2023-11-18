@@ -1,10 +1,12 @@
-import java.util.Properties
+@file:Suppress("DSL_SCOPE_VIOLATION")
 
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose)
+    alias(libs.plugins.dokka)
     id("maven-publish")
     id("signing")
 }
@@ -39,16 +41,36 @@ kotlin {
     macosArm64()
     macosX64()
 
-    sourceSets["commonMain"].dependencies {
-        implementation(compose.ui)
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.ui)
+            }
+        }
+
+        val jsMain by getting
+        val iosMain by getting
+        val iosSimulatorArm64Main by getting
+        val desktopMain by getting
+        val macosX64Main by getting
+        val macosArm64Main by getting
+
+        val darwinMain by creating {
+            dependsOn(commonMain)
+            macosX64Main.dependsOn(this)
+            macosArm64Main.dependsOn(this)
+            iosMain.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
+
+        val nonAndroidMain by creating {
+            dependsOn(commonMain)
+            jsMain.dependsOn(this)
+            desktopMain.dependsOn(this)
+            darwinMain.dependsOn(this)
+        }
     }
-//    sourceSets {
-//        val commonMain by getting {
-//            dependencies {
-//                implementation(compose.ui)
-//            }
-//        }
-//    }
 }
 
 android {
@@ -84,7 +106,6 @@ extra.apply {
             }
         }
     } else {
-        throw Exception()
         ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID")
         ext["signing.password"] = System.getenv("SIGNING_PASSWORD")
         ext["signing.secretKeyRingFile"] = System.getenv("SIGNING_SECRET_KEY_RING_FILE")
