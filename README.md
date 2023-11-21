@@ -1,7 +1,4 @@
-# QRose 
-
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose)
-
+# QRose
 
 ![badge-Android](https://img.shields.io/badge/Platform-Android-brightgreen)
 ![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
@@ -10,7 +7,6 @@
 ![badge-web](https://img.shields.io/badge/Platform-Web-blue)
 
 QR code design library for Compose Multiplatform
-
 
 <img width="465" alt="Screenshot 2023-10-10 at 10 34 05" src="https://github.com/alexzhirkevich/qrose/assets/63979218/7469cc1c-d6fd-4dab-997d-f2604dfa49de">
 
@@ -22,22 +18,28 @@ Why QRose?
 - **Multiplatform** - supports all the targets supported by Compose Multiplatform.
 
 # Installation
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose)
+
 ```gradle
 dependencies {
-    implementation("io.github.alexzhirkevich:qrose:1.0.0-beta02")
+    implementation("io.github.alexzhirkevich:qrose:1.0.0-beta3")
 }
 ```
 
 # Usage
 
+## Generate
+
 You can create code right in composition using `rememberQrCodePainter`.
 Or do it outside of Compose scope by instantiating a `QrCodePainter` class.
 
 There are some overloads of `rememberQrCodePainter` including DSL constructor:
-```kotlin
-val logoPainter = painterResource("logo.png")
 
-val qrcodePainter = rememberQrCodePainter("https://example.com") {
+```kotlin
+val logoPainter : Painter = painterResource("logo.png")
+
+val qrcodePainter : Painter = rememberQrCodePainter("https://example.com") {
     logo {
         painter = logoPainter
         padding = QrLogoPadding.Natural(.1f)
@@ -74,7 +76,7 @@ val qrcodePainter = rememberQrCodePainter(
 )
 ```
 
-# Customization
+## Customize
 
 You can create your own shapes for each QR code part, for example:
 
@@ -86,6 +88,36 @@ class MyCircleBallShape : QrBallShape {
     }
 }
 ```
+
 > **Note**
 >A path here uses [`PathFillType.EvenOdd`](https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/PathFillType#EvenOdd()) that cannot be changed.
 
+## Data types
+
+QR codes can hold various payload types: Text, Wi-Fi, E-mail, vCard, etc.
+
+`QrData` object can be used to perform such encodings, for example:
+
+```kotlin
+val wifiData : String = QrData.wifi(ssid = "My Network", psk = "12345678")
+
+val wifiCode = rememberQrCodePainter(wifiData)
+```
+
+## Export
+
+QR codes can be exported to `PNG`, `JPEG` and `WEBP` formats using `toByteArray` function:
+
+```kotlin
+
+val painter : Painter = QrCodePainter(
+    data = "https://example.com",
+    options =  QrOptions { 
+        colors {
+            //...
+        }
+    }
+)
+
+val bytes : ByteArray = painter.toByteArray(1024, 1024, ImageFormat.PNG)
+```
