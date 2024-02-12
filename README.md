@@ -36,7 +36,7 @@ Or do it outside of Compose scope by instantiating a `QrCodePainter` class.
 
 ```kotlin
 Image(
-    painter = rememberQrCodePainter("https://example.com")
+    painter = rememberQrCodePainter("https://example.com"),
     contentDescription = "QR code"
 )
 ```
