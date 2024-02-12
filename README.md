@@ -29,10 +29,19 @@ dependencies {
 
 # Usage
 
-## Generate
+## Basic
 
 You can create code right in composition using `rememberQrCodePainter`.
 Or do it outside of Compose scope by instantiating a `QrCodePainter` class.
+
+```kotlin
+Image(
+    painter = rememberQrCodePainter("https://example.com")
+    contentDescription = "QR code"
+)
+```
+
+## Design
 
 There are some overloads of `rememberQrCodePainter` including DSL constructor:
 
