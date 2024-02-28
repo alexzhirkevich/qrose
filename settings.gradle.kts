@@ -19,6 +19,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "QRose"
 include(":qrose")
+
 include(":example:desktopApp")
 include(":example:webJsApp")
 include(":example:androidapp")

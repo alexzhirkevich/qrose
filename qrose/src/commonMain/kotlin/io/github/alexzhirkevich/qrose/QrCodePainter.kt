@@ -96,8 +96,7 @@ fun rememberQrCodePainter(
 class QrCodePainter(
     val data : String,
     val options: QrOptions = QrOptions(),
-) : Painter() {
-
+) : CachedPainter() {
     private val initialMatrixSize : Int
 
     private val actualCodeMatrix = options.shapes.code.run {
@@ -121,6 +120,7 @@ class QrCodePainter(
         codeMatrix.size.toFloat() * 10f,
         codeMatrix.size.toFloat() * 10f
     )
+
 
     private val shapeIncrease = (codeMatrix.size - initialMatrixSize)/2
 
@@ -155,28 +155,12 @@ class QrCodePainter(
     private val shouldSeparateBalls
         get() = options.colors.ball.isSpecified || shouldSeparateDarkPixels
 
-    private var colorFilter: ColorFilter? = null
-    private var alpha: Float = 1f
-
-    private val cacheDrawScope = DrawCache()
-    private var cachedSize: Size? = null
-
     override fun toString(): String {
         return "QrCodePainter(data = $data)"
     }
 
     override fun hashCode(): Int {
         return data.hashCode() * 31 + options.hashCode()
-    }
-
-    override fun applyAlpha(alpha: Float): Boolean {
-        this.alpha = alpha
-        return true
-    }
-
-    override fun applyColorFilter(colorFilter: ColorFilter?): Boolean {
-        this.colorFilter = colorFilter
-        return true
     }
 
     private val DrawScope.logoSize
@@ -188,8 +172,10 @@ class QrCodePainter(
     private val DrawScope.pixelSize : Float
         get() = minOf(size.width, size.height) / codeMatrix.size
 
-    private val drawBlock: DrawScope.() -> Unit = { draw() }
 
+    override fun DrawScope.onCache() {
+        draw()
+    }
     private fun DrawScope.draw() {
 
         val pixelSize = pixelSize
@@ -228,29 +214,6 @@ class QrCodePainter(
 
         drawLogo()
     }
-
-
-
-    override fun DrawScope.onDraw() {
-
-        if (cachedSize != size) {
-
-            codeMatrix = actualCodeMatrix.copy()
-
-            cacheDrawScope.drawCachedImage(
-                size = IntSize(ceil(size.width).toInt(), ceil(size.height).toInt()),
-                density = this,
-                layoutDirection = layoutDirection,
-                block = drawBlock
-            )
-        }
-        cacheDrawScope.drawInto(
-            target = this,
-            alpha = alpha,
-            colorFilter = colorFilter
-        )
-    }
-
 
     private fun DrawScope.drawSeparatePixels(
         pixelSize: Float,
@@ -369,7 +332,7 @@ class QrCodePainter(
                     left = center.x - logoSize.width / 2,
                     top = center.y - logoSize.height / 2
                 ) {
-                    draw(logoSize, alpha, colorFilter)
+                    draw(logoSize)
                 }
             }
         }

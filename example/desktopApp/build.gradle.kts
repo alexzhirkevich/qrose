@@ -7,10 +7,7 @@ plugins {
 
 kotlin {
     jvm {
-        withJava()
-//        compilations.all {
-//            kotlinOptions.jvmTarget = "11"
-//        }
+
     }
     sourceSets {
         val jvmMain by getting {
@@ -18,7 +15,7 @@ kotlin {
             dependencies {
                 implementation(project(":example:shared"))
 
-                implementation(compose.desktop.macos_arm64)
+                implementation(compose.desktop.currentOs)
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
