@@ -53,9 +53,6 @@ internal abstract class QRData(val dataType: QRCodeDataType, val data: String) {
  * @author Rafael Lins - g0dkar
  * @author Kazuhiko Arase - kazuhikoarase
  */
-@JsExport
-@OptIn(ExperimentalJsExport::class)
-@Suppress("NON_EXPORTABLE_TYPE")
 internal class QR8BitByte(data: String) : QRData(DEFAULT, data) {
     private val dataBytes = data.encodeToByteArray()
 
@@ -75,9 +72,6 @@ internal class QR8BitByte(data: String) : QRData(DEFAULT, data) {
  * @author Rafael Lins - g0dkar
  * @author Kazuhiko Arase - kazuhikoarase
  */
-@JsExport
-@OptIn(ExperimentalJsExport::class)
-@Suppress("NON_EXPORTABLE_TYPE")
 internal class QRAlphaNum(data: String) : QRData(UPPER_ALPHA_NUM, data) {
     override fun write(buffer: BitBuffer) {
         var i = 0
@@ -120,9 +114,6 @@ internal class QRAlphaNum(data: String) : QRData(UPPER_ALPHA_NUM, data) {
  * @author Rafael Lins - g0dkar
  * @author Kazuhiko Arase - kazuhikoarase
  */
-@JsExport
-@OptIn(ExperimentalJsExport::class)
-@Suppress("NON_EXPORTABLE_TYPE")
 internal class QRNumber(data: String) : QRData(NUMBERS, data) {
     override fun write(buffer: BitBuffer) {
         var i = 0

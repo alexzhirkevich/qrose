@@ -21,6 +21,6 @@ rootProject.name = "QRose"
 include(":qrose")
 
 include(":example:desktopApp")
-include(":example:webJsApp")
+include(":example:webApp")
 include(":example:androidapp")
 include(":example:shared")
