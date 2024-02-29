@@ -11,14 +11,14 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 
 /**
- * EAN13 barcode painter
+ * EAN8 barcode painter
  *
  * @param brush code brush
  * @param onError called when input content is invalid
  * @param builder build code path using painter size and encoded boolean list
  * */
 @Composable
-fun rememberEAN13Painter(
+fun rememberEAN8Painter(
     data: String,
     brush: Brush = SolidColor(Color.Black),
     onError : (Throwable) -> Painter = { throw  it },
@@ -30,7 +30,7 @@ fun rememberEAN13Painter(
 
     return remember(density, data, brush) {
         runCatching {
-            EAN13Painter(
+            EAN8Painter(
                 data = data,
                 density = density.density,
                 brush = brush,
@@ -42,14 +42,14 @@ fun rememberEAN13Painter(
     }
 }
 
-class EAN13Painter(
+class EAN8Painter(
     val data : String,
     val brush: Brush = SolidColor(Color.Black),
     density : Float = 1f,
     builder: BarcodePathBuilder = ::defaultOneDBarcodeBuilder,
 ) : SingleDimensionBarcodePainter(
     density = density,
-    code = CodeEAN13().encode(data).toList(),
+    code = CodeEAN8().encode(data).toList(),
     brush = brush,
     builder = builder
 )

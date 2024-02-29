@@ -21,6 +21,7 @@ kotlin {
                 api(compose.material)
                 api(compose.ui)
                 api(compose.materialIconsExtended)
+                implementation("com.google.zxing:core:3.5.3")
             }
         }
     }

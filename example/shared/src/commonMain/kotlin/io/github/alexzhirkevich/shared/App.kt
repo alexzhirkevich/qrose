@@ -2,13 +2,24 @@
 
 package io.github.alexzhirkevich.shared
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,11 +34,15 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.qrose.QrData
 import io.github.alexzhirkevich.qrose.email
+import io.github.alexzhirkevich.qrose.oned.rememberCodabarPainter
 import io.github.alexzhirkevich.qrose.oned.rememberCode128Painter
 import io.github.alexzhirkevich.qrose.oned.rememberCode39Painter
 import io.github.alexzhirkevich.qrose.oned.rememberCode93Painter
 import io.github.alexzhirkevich.qrose.oned.rememberEAN13Painter
 import io.github.alexzhirkevich.qrose.oned.rememberEAN8Painter
+import io.github.alexzhirkevich.qrose.oned.rememberITFPainter
+import io.github.alexzhirkevich.qrose.oned.rememberUPCAPainter
+import io.github.alexzhirkevich.qrose.oned.rememberUPCEPainter
 import io.github.alexzhirkevich.qrose.options.DelicateQRoseApi
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
@@ -50,89 +65,52 @@ import qrose.example.shared.generated.resources.Res
 import qrose.example.shared.generated.resources.jc
 import qrose.example.shared.generated.resources.jcbg
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    QrCode()
+    AllBarcodes()
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun AllBarcodes() {
+    FlowRow(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        OnedCode("ITF", rememberITFPainter("123456734512"))
+        OnedCode("UPC E", rememberUPCEPainter("02345673"))
+        OnedCode("UPC A", rememberUPCAPainter("123456789012"))
+        OnedCode("EAN 13", rememberEAN13Painter("9780201379624"))
+        OnedCode("EAN 8", rememberEAN8Painter("1234567"))
+        OnedCode("Code 39", rememberCode39Painter("TEST"))
+        OnedCode("Code 93", rememberCode93Painter("TEST"))
+        OnedCode("Code 128", rememberCode128Painter("test"))
+        OnedCode("Codabar", rememberCodabarPainter("A23342453D"))
+        OnedCode("QR", rememberQrCodePainter("https://github.com/alexzhirkevich/qrose"))
+    }
 }
 
 @Composable
-fun CodeEAN13() {
-    val painter = rememberEAN13Painter(
-        data = "9780201379624"
-    )
-
-    Image(
-        painter = painter,
-        contentDescription = null,
+fun OnedCode(
+    name : String,
+    code : Painter
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(.3f)
-    )
-}
-
-
-@Composable
-fun CodeEAN8(){
-    val painter = rememberEAN8Painter(
-        data = "1234567"
-    )
-
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(.3f)
-    )
-}
-
-@Composable
-fun Code39(){
-    val painter = rememberCode39Painter(
-        data = "WIKIPEDIA"
-    )
-
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(.3f)
-    )
-}
-
-@Composable
-fun Code93(){
-    val painter = rememberCode93Painter(
-        data = "TEST123"
-    )
-
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(.3f)
-            .padding(30.dp)
-    )
-}
-
-
-@Composable
-fun Code128(){
-    val painter = rememberCode128Painter(
-        data = "test",
-        brush = Brush.horizontalGradient(0f to Color.Red, 1f to Color.Blue)
-    )
-
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = Modifier
-            .size(350.dp)
+            .padding(50.dp)
+            .border(1.dp, Color.Black)
             .padding(10.dp)
-    )
+    ) {
+        Image(
+            painter = code,
+            contentDescription = null,
+            modifier = Modifier
+                .width(300.dp)
+                .height(100.dp)
+        )
+        Text(name)
+    }
 }
+
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
