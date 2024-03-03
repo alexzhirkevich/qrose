@@ -15,48 +15,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toSize
 import kotlin.math.ceil
 
-abstract class CachedPainter : Painter() {
-
-    private var alpha = 1f
-    private var colorFilter : ColorFilter?= null
-
-    private var cachedSize: Size? = null
-
-    private var cacheDrawScope = DrawCache()
-
-    override fun applyAlpha(alpha: Float): Boolean {
-        this.alpha = alpha
-        return true
-    }
-
-    override fun applyColorFilter(colorFilter: ColorFilter?): Boolean {
-        this.colorFilter = colorFilter
-        return true
-    }
-
-    abstract fun DrawScope.onCache()
-
-    private val block : DrawScope.() -> Unit = { onCache() }
-
-    override fun DrawScope.onDraw() {
-        if (cachedSize != size) {
-
-            cacheDrawScope.drawCachedImage(
-                size = IntSize(ceil(size.width).toInt(), ceil(size.height).toInt()),
-                density = this,
-                layoutDirection = layoutDirection,
-                block = block
-            )
-            cachedSize = size
-        }
-        cacheDrawScope.drawInto(
-            target = this,
-            alpha = alpha,
-            colorFilter = colorFilter
-        )
-    }
-}
-
 /**
  * Creates a drawing environment that directs its drawing commands to an [ImageBitmap]
  * which can be drawn directly in another [DrawScope] instance. This is useful to cache

@@ -47,6 +47,7 @@ import io.github.alexzhirkevich.qrose.options.image
 import io.github.alexzhirkevich.qrose.options.roundCorners
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import io.github.alexzhirkevich.qrose.toByteArray
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import qrose.example.shared.generated.resources.Res

@@ -8,7 +8,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
@@ -16,25 +15,23 @@ import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.unit.IntSize
-import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
-import io.github.alexzhirkevich.qrose.options.QrOptions
-import io.github.alexzhirkevich.qrose.options.dsl.QrOptionsBuilderScope
 import io.github.alexzhirkevich.qrose.options.Neighbors
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrBrushMode
 import io.github.alexzhirkevich.qrose.options.QrCodeMatrix
 import io.github.alexzhirkevich.qrose.options.QrColors
+import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
 import io.github.alexzhirkevich.qrose.options.QrLogo
 import io.github.alexzhirkevich.qrose.options.QrLogoPadding
+import io.github.alexzhirkevich.qrose.options.QrOptions
 import io.github.alexzhirkevich.qrose.options.QrShapeModifier
 import io.github.alexzhirkevich.qrose.options.QrShapes
+import io.github.alexzhirkevich.qrose.options.dsl.QrOptionsBuilderScope
 import io.github.alexzhirkevich.qrose.options.isSpecified
 import io.github.alexzhirkevich.qrose.options.neighbors
 import io.github.alexzhirkevich.qrose.options.newPath
 import io.github.alexzhirkevich.qrose.qrcode.ErrorCorrectionLevel
 import io.github.alexzhirkevich.qrose.qrcode.QRCode
-import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 /**
