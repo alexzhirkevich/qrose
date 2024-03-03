@@ -29,7 +29,7 @@ dependencies {
     implementation("io.github.alexzhirkevich:qrose:1.0.0")
     
     // For single-dimension barcodes (UPC,EAN, Code128, ...)
-    implementation("io.github.alexzhirkevich:qrose:1.0.0-oned")
+    implementation("io.github.alexzhirkevich:qrose-oned:1.0.0")
 }
 ```
 
