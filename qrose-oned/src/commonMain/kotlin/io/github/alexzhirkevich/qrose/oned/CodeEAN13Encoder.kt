@@ -1,14 +1,14 @@
 package io.github.alexzhirkevich.qrose.oned
 
 
-internal class CodeEAN13 {
+internal object CodeEAN13Encoder : BarcodeEncoder {
 
     private val CODE_WIDTH = 3 + 7 * 6 +  // left bars
             5 + 7 * 6 +  // right bars
             3 // end guard
 
 
-    fun encode(contents: String): BooleanArray {
+    override fun encode(contents: String): BooleanArray {
         var actualContents = contents
         val length = actualContents.length
         when (length) {

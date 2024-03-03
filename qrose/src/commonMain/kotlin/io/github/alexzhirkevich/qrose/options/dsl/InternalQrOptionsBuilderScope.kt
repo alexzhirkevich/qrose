@@ -2,7 +2,7 @@ package io.github.alexzhirkevich.qrose.options.dsl
 
 import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
 import io.github.alexzhirkevich.qrose.options.QrOptions
-import io.github.alexzhirkevich.qrose.options.DelicateQRoseApi
+import io.github.alexzhirkevich.qrose.DelicateQRoseApi
 
 
 internal class InternalQrOptionsBuilderScope(

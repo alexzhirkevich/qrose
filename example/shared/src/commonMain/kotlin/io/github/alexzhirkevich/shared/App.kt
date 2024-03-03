@@ -6,20 +6,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,18 +27,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import io.github.alexzhirkevich.qrose.DelicateQRoseApi
 import io.github.alexzhirkevich.qrose.QrData
 import io.github.alexzhirkevich.qrose.email
-import io.github.alexzhirkevich.qrose.oned.rememberCodabarPainter
-import io.github.alexzhirkevich.qrose.oned.rememberCode128Painter
-import io.github.alexzhirkevich.qrose.oned.rememberCode39Painter
-import io.github.alexzhirkevich.qrose.oned.rememberCode93Painter
-import io.github.alexzhirkevich.qrose.oned.rememberEAN13Painter
-import io.github.alexzhirkevich.qrose.oned.rememberEAN8Painter
-import io.github.alexzhirkevich.qrose.oned.rememberITFPainter
-import io.github.alexzhirkevich.qrose.oned.rememberUPCAPainter
-import io.github.alexzhirkevich.qrose.oned.rememberUPCEPainter
-import io.github.alexzhirkevich.qrose.options.DelicateQRoseApi
+import io.github.alexzhirkevich.qrose.oned.BarcodeType
+import io.github.alexzhirkevich.qrose.oned.rememberBarcodePainter
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrCodeShape
@@ -65,7 +53,6 @@ import qrose.example.shared.generated.resources.Res
 import qrose.example.shared.generated.resources.jc
 import qrose.example.shared.generated.resources.jcbg
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
     AllBarcodes()
@@ -75,15 +62,15 @@ fun App() {
 @Composable
 fun AllBarcodes() {
     FlowRow(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        OnedCode("ITF", rememberITFPainter("123456734512"))
-        OnedCode("UPC E", rememberUPCEPainter("02345673"))
-        OnedCode("UPC A", rememberUPCAPainter("123456789012"))
-        OnedCode("EAN 13", rememberEAN13Painter("9780201379624"))
-        OnedCode("EAN 8", rememberEAN8Painter("1234567"))
-        OnedCode("Code 39", rememberCode39Painter("TEST"))
-        OnedCode("Code 93", rememberCode93Painter("TEST"))
-        OnedCode("Code 128", rememberCode128Painter("test"))
-        OnedCode("Codabar", rememberCodabarPainter("A23342453D"))
+        OnedCode("ITF", rememberBarcodePainter("123456734512", BarcodeType.ITF))
+        OnedCode("UPC E", rememberBarcodePainter("02345673", BarcodeType.UPCE))
+        OnedCode("UPC A", rememberBarcodePainter("123456789012", BarcodeType.UPCA))
+        OnedCode("EAN 13", rememberBarcodePainter("9780201379624", BarcodeType.EAN13))
+        OnedCode("EAN 8", rememberBarcodePainter("1234567", BarcodeType.EAN8))
+        OnedCode("Code 39", rememberBarcodePainter("TEST", BarcodeType.Code39))
+        OnedCode("Code 93", rememberBarcodePainter("TEST", BarcodeType.Code93))
+        OnedCode("Code 128", rememberBarcodePainter("test", BarcodeType.Code128))
+        OnedCode("Codabar", rememberBarcodePainter("A23342453D", BarcodeType.Codabar))
         OnedCode("QR", rememberQrCodePainter("https://github.com/alexzhirkevich/qrose"))
     }
 }

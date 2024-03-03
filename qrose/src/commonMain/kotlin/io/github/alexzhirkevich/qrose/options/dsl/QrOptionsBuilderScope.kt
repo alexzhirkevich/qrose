@@ -1,8 +1,8 @@
 package io.github.alexzhirkevich.qrose.options.dsl
 
+import io.github.alexzhirkevich.qrose.DelicateQRoseApi
 import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
 import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel.Auto
-import io.github.alexzhirkevich.qrose.options.DelicateQRoseApi
 
 sealed interface QrOptionsBuilderScope  {
 

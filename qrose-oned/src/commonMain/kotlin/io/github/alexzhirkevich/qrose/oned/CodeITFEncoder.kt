@@ -1,9 +1,9 @@
 package io.github.alexzhirkevich.qrose.oned
 
 
-internal class CodeITF  {
+internal object CodeITFEncoder : BarcodeEncoder {
 
-    fun encode(contents: String): BooleanArray {
+    override fun encode(contents: String): BooleanArray {
         val length = contents.length
         if (length % 2 != 0) {
             throw IllegalArgumentException("The length of the input should be even")
@@ -32,28 +32,26 @@ internal class CodeITF  {
         return result
     }
 
-    companion object {
-        private val START_PATTERN = intArrayOf(1, 1, 1, 1)
-        private val END_PATTERN = intArrayOf(3, 1, 1)
-        private const val W = 3 // Pixel width of a 3x wide line
-        private const val N = 1 // Pixed width of a narrow line
+    private val START_PATTERN = intArrayOf(1, 1, 1, 1)
+    private val END_PATTERN = intArrayOf(3, 1, 1)
+    private const val W = 3 // Pixel width of a 3x wide line
+    private const val N = 1 // Pixed width of a narrow line
 
-        // See ITFReader.PATTERNS
-        private val PATTERNS = arrayOf(
-            intArrayOf(N, N, W, W, N),
-            intArrayOf(W, N, N, N, W),
-            intArrayOf(
-                N, W, N, N, W
-            ),
-            intArrayOf(W, W, N, N, N),
-            intArrayOf(N, N, W, N, W),
-            intArrayOf(W, N, W, N, N),
-            intArrayOf(
-                N, W, W, N, N
-            ),
-            intArrayOf(N, N, N, W, W),
-            intArrayOf(W, N, N, W, N),
-            intArrayOf(N, W, N, W, N)
-        )
-    }
+    // See ITFReader.PATTERNS
+    private val PATTERNS = arrayOf(
+        intArrayOf(N, N, W, W, N),
+        intArrayOf(W, N, N, N, W),
+        intArrayOf(
+            N, W, N, N, W
+        ),
+        intArrayOf(W, W, N, N, N),
+        intArrayOf(N, N, W, N, W),
+        intArrayOf(W, N, W, N, N),
+        intArrayOf(
+            N, W, W, N, N
+        ),
+        intArrayOf(N, N, N, W, W),
+        intArrayOf(W, N, N, W, N),
+        intArrayOf(N, W, N, W, N)
+    )
 }

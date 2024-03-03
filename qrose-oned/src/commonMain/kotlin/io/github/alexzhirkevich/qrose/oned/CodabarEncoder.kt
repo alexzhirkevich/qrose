@@ -1,8 +1,8 @@
 package io.github.alexzhirkevich.qrose.oned
 
-internal class Codabar {
+internal object CodabarEncoder : BarcodeEncoder {
 
-    fun encode(contents: String): BooleanArray {
+    override fun encode(contents: String): BooleanArray {
         var actualContents = contents
         if (actualContents.length < 2) {
             // Can't have a start/end guard, so tentatively add default guards
@@ -91,22 +91,20 @@ internal class Codabar {
         return result
     }
 
-    companion object {
-        private val START_END_CHARS = charArrayOf('A', 'B', 'C', 'D')
-        private val ALT_START_END_CHARS = charArrayOf('T', 'N', '*', 'E')
-        private val CHARS_WHICH_ARE_TEN_LENGTH_EACH_AFTER_DECODED = charArrayOf('/', ':', '+', '.')
-        private val DEFAULT_GUARD = START_END_CHARS[0]
+    private val START_END_CHARS = charArrayOf('A', 'B', 'C', 'D')
+    private val ALT_START_END_CHARS = charArrayOf('T', 'N', '*', 'E')
+    private val CHARS_WHICH_ARE_TEN_LENGTH_EACH_AFTER_DECODED = charArrayOf('/', ':', '+', '.')
+    private val DEFAULT_GUARD = START_END_CHARS[0]
 
-        private const val ALPHABET_STRING = "0123456789-$:/.+ABCD"
-        val ALPHABET = ALPHABET_STRING.toCharArray()
+    private const val ALPHABET_STRING = "0123456789-$:/.+ABCD"
+    private val ALPHABET = ALPHABET_STRING.toCharArray()
 
-        /**
-         * These represent the encodings of characters, as patterns of wide and narrow bars. The 7 least-significant bits of
-         * each int correspond to the pattern of wide and narrow, with 1s representing "wide" and 0s representing narrow.
-         */
-        val CHARACTER_ENCODINGS = intArrayOf(
-            0x003, 0x006, 0x009, 0x060, 0x012, 0x042, 0x021, 0x024, 0x030, 0x048,  // 0-9
-            0x00c, 0x018, 0x045, 0x051, 0x054, 0x015, 0x01A, 0x029, 0x00B, 0x00E
-        )
-    }
+    /**
+     * These represent the encodings of characters, as patterns of wide and narrow bars. The 7 least-significant bits of
+     * each int correspond to the pattern of wide and narrow, with 1s representing "wide" and 0s representing narrow.
+     */
+    private val CHARACTER_ENCODINGS = intArrayOf(
+        0x003, 0x006, 0x009, 0x060, 0x012, 0x042, 0x021, 0x024, 0x030, 0x048,  // 0-9
+        0x00c, 0x018, 0x045, 0x051, 0x054, 0x015, 0x01A, 0x029, 0x00B, 0x00E
+    )
 }

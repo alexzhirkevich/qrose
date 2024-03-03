@@ -1,9 +1,12 @@
 package io.github.alexzhirkevich.qrose.oned
 
 
-class CodeUPCE  {
+internal object CodeUPCEEncoder : BarcodeEncoder  {
 
-    fun encode(contents: String): BooleanArray {
+    private const val CODE_WIDTH = 3 + 7 * 6 +  // bars
+            6 // end guard
+
+    override fun encode(contents: String): BooleanArray {
         var contents = contents
         val length = contents.length
         when (length) {
@@ -42,8 +45,4 @@ class CodeUPCE  {
         return result
     }
 
-    companion object {
-        private const val CODE_WIDTH = 3 + 7 * 6 +  // bars
-                6 // end guard
-    }
 }

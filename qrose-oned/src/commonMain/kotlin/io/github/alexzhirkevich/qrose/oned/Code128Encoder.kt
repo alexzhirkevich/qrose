@@ -1,6 +1,6 @@
 package io.github.alexzhirkevich.qrose.oned
 
-internal class Code128  {
+internal object Code128Encoder : BarcodeEncoder {
     // Results of minimal lookahead for code C
     private enum class CType {
         UNCODABLE,
@@ -9,8 +9,15 @@ internal class Code128  {
         FNC_1
     }
 
+    override fun encode(data: String): BooleanArray {
+        return encode(contents = data)
+    }
 
-    fun encode(contents: String, compact : Boolean = true , codeSet : Code128Painter.CodeSet? = null): BooleanArray {
+    fun encode(
+        contents: String,
+        compact: Boolean = true,
+        codeSet: Code128Type? = null
+    ): BooleanArray {
         val forcedCodeSet = check(contents, codeSet)
 
         return if (compact) {
@@ -265,253 +272,250 @@ internal class Code128  {
     }
 
 
-    companion object {
+    private const val CODE_START_A = 103
+    private const val CODE_START_B = 104
+    private const val CODE_START_C = 105
+    internal const val CODE_CODE_A = 101
+    internal const val CODE_CODE_B = 100
+    internal const val CODE_CODE_C = 99
+    private const val CODE_STOP = 106
 
-        private const val CODE_START_A = 103
-        private const val CODE_START_B = 104
-        private const val CODE_START_C = 105
-        internal const val CODE_CODE_A = 101
-        internal const val CODE_CODE_B = 100
-        internal const val CODE_CODE_C = 99
-        private const val CODE_STOP = 106
+    // Dummy characters used to specify control characters in input
+    private const val ESCAPE_FNC_1 = '\u00f1'
+    private const val ESCAPE_FNC_2 = '\u00f2'
+    private const val ESCAPE_FNC_3 = '\u00f3'
+    private const val ESCAPE_FNC_4 = '\u00f4'
+    private const val CODE_FNC_1 = 102 // Code A, Code B, Code C
+    private const val CODE_FNC_2 = 97 // Code A, Code B
+    private const val CODE_FNC_3 = 96 // Code A, Code B
+    private const val CODE_FNC_4_A = 101 // Code A
+    private const val CODE_FNC_4_B = 100 // Code B
 
-        // Dummy characters used to specify control characters in input
-        private const val ESCAPE_FNC_1 = '\u00f1'
-        private const val ESCAPE_FNC_2 = '\u00f2'
-        private const val ESCAPE_FNC_3 = '\u00f3'
-        private const val ESCAPE_FNC_4 = '\u00f4'
-        private const val CODE_FNC_1 = 102 // Code A, Code B, Code C
-        private const val CODE_FNC_2 = 97 // Code A, Code B
-        private const val CODE_FNC_3 = 96 // Code A, Code B
-        private const val CODE_FNC_4_A = 101 // Code A
-        private const val CODE_FNC_4_B = 100 // Code B
+    private fun check(contents: String, codeSet: Code128Type?): Int {
 
-        private fun check(contents: String, codeSet : Code128Painter.CodeSet?): Int {
-
-            // Check content
-            val length = contents.length
-            for (i in 0 until length) {
-                val c = contents[i]
-                when (c) {
-                    ESCAPE_FNC_1, ESCAPE_FNC_2, ESCAPE_FNC_3, ESCAPE_FNC_4 -> {}
-                    else -> if (c.code > 127) {
-                        // no full Latin-1 character set available at the moment
-                        // shift and manual code change are not supported
-                        throw IllegalArgumentException("Bad character in input: ASCII value=" + c.code)
-                    }
-                }
-                when (codeSet) {
-                    Code128Painter.CodeSet.A ->           // allows no ascii above 95 (no lower caps, no special symbols)
-                        if (c.code in 96..127) {
-                            throw IllegalArgumentException("Bad character in input for forced code set A: ASCII value=" + c.code)
-                        }
-
-                    Code128Painter.CodeSet.B ->           // allows no ascii below 32 (terminal symbols)
-                        if (c.code < 32) {
-                            throw IllegalArgumentException("Bad character in input for forced code set B: ASCII value=" + c.code)
-                        }
-
-                    Code128Painter.CodeSet.C ->           // allows only numbers and no FNC 2/3/4
-                        if (c.code < 48 || c.code in 58..127 || c == ESCAPE_FNC_2 || c == ESCAPE_FNC_3 || c == ESCAPE_FNC_4) {
-                            throw IllegalArgumentException("Bad character in input for forced code set C: ASCII value=" + c.code)
-                        }
-
-                    else -> {}
+        // Check content
+        val length = contents.length
+        for (i in 0 until length) {
+            val c = contents[i]
+            when (c) {
+                ESCAPE_FNC_1, ESCAPE_FNC_2, ESCAPE_FNC_3, ESCAPE_FNC_4 -> {}
+                else -> if (c.code > 127) {
+                    // no full Latin-1 character set available at the moment
+                    // shift and manual code change are not supported
+                    throw IllegalArgumentException("Bad character in input: ASCII value=" + c.code)
                 }
             }
-            return codeSet?.v ?: -1
+            when (codeSet) {
+                Code128Type.A ->           // allows no ascii above 95 (no lower caps, no special symbols)
+                    if (c.code in 96..127) {
+                        throw IllegalArgumentException("Bad character in input for forced code set A: ASCII value=" + c.code)
+                    }
+
+                Code128Type.B ->           // allows no ascii below 32 (terminal symbols)
+                    if (c.code < 32) {
+                        throw IllegalArgumentException("Bad character in input for forced code set B: ASCII value=" + c.code)
+                    }
+
+                Code128Type.C ->           // allows only numbers and no FNC 2/3/4
+                    if (c.code < 48 || c.code in 58..127 || c == ESCAPE_FNC_2 || c == ESCAPE_FNC_3 || c == ESCAPE_FNC_4) {
+                        throw IllegalArgumentException("Bad character in input for forced code set C: ASCII value=" + c.code)
+                    }
+
+                else -> {}
+            }
         }
+        return codeSet?.v ?: -1
+    }
 
-        private fun encodeFast(contents: String, forcedCodeSet: Int): BooleanArray {
-            val length = contents.length
-            val patterns: MutableCollection<IntArray> = ArrayList() // temporary storage for patterns
-            var checkSum = 0
-            var checkWeight = 1
-            var codeSet = 0 // selected code (CODE_CODE_B or CODE_CODE_C)
-            var position = 0 // position in contents
-            while (position < length) {
-                //Select code to use
-                var newCodeSet: Int
-                newCodeSet = if (forcedCodeSet == -1) {
-                    chooseCode(contents, position, codeSet)
-                } else {
-                    forcedCodeSet
-                }
+    private fun encodeFast(contents: String, forcedCodeSet: Int): BooleanArray {
+        val length = contents.length
+        val patterns: MutableCollection<IntArray> = ArrayList() // temporary storage for patterns
+        var checkSum = 0
+        var checkWeight = 1
+        var codeSet = 0 // selected code (CODE_CODE_B or CODE_CODE_C)
+        var position = 0 // position in contents
+        while (position < length) {
+            //Select code to use
+            var newCodeSet: Int
+            newCodeSet = if (forcedCodeSet == -1) {
+                chooseCode(contents, position, codeSet)
+            } else {
+                forcedCodeSet
+            }
 
-                //Get the pattern index
-                var patternIndex: Int
-                if (newCodeSet == codeSet) {
-                    // Encode the current character
-                    // First handle escapes
-                    when (contents[position]) {
-                        ESCAPE_FNC_1 -> patternIndex = CODE_FNC_1
-                        ESCAPE_FNC_2 -> patternIndex = CODE_FNC_2
-                        ESCAPE_FNC_3 -> patternIndex = CODE_FNC_3
-                        ESCAPE_FNC_4 -> patternIndex = if (codeSet == CODE_CODE_A) {
-                            CODE_FNC_4_A
-                        } else {
-                            CODE_FNC_4_B
-                        }
+            //Get the pattern index
+            var patternIndex: Int
+            if (newCodeSet == codeSet) {
+                // Encode the current character
+                // First handle escapes
+                when (contents[position]) {
+                    ESCAPE_FNC_1 -> patternIndex = CODE_FNC_1
+                    ESCAPE_FNC_2 -> patternIndex = CODE_FNC_2
+                    ESCAPE_FNC_3 -> patternIndex = CODE_FNC_3
+                    ESCAPE_FNC_4 -> patternIndex = if (codeSet == CODE_CODE_A) {
+                        CODE_FNC_4_A
+                    } else {
+                        CODE_FNC_4_B
+                    }
 
-                        else -> when (codeSet) {
-                            CODE_CODE_A -> {
-                                patternIndex = contents[position].code - ' '.code
-                                if (patternIndex < 0) {
-                                    // everything below a space character comes behind the underscore in the code patterns table
-                                    patternIndex += '`'.code
-                                }
-                            }
-
-                            CODE_CODE_B -> patternIndex = contents[position].code - ' '.code
-                            else -> {
-                                // CODE_CODE_C
-                                if (position + 1 == length) {
-                                    // this is the last character, but the encoding is C, which always encodes two characers
-                                    throw IllegalArgumentException("Bad number of characters for digit only encoding.")
-                                }
-                                patternIndex = contents.substring(position, position + 2).toInt()
-                                position++ // Also incremented below
+                    else -> when (codeSet) {
+                        CODE_CODE_A -> {
+                            patternIndex = contents[position].code - ' '.code
+                            if (patternIndex < 0) {
+                                // everything below a space character comes behind the underscore in the code patterns table
+                                patternIndex += '`'.code
                             }
                         }
-                    }
-                    position++
-                } else {
-                    // Should we change the current code?
-                    // Do we have a code set?
-                    patternIndex = if (codeSet == 0) {
-                        // No, we don't have a code set
-                        when (newCodeSet) {
-                            CODE_CODE_A -> CODE_START_A
-                            CODE_CODE_B -> CODE_START_B
-                            else -> CODE_START_C
+
+                        CODE_CODE_B -> patternIndex = contents[position].code - ' '.code
+                        else -> {
+                            // CODE_CODE_C
+                            if (position + 1 == length) {
+                                // this is the last character, but the encoding is C, which always encodes two characers
+                                throw IllegalArgumentException("Bad number of characters for digit only encoding.")
+                            }
+                            patternIndex = contents.substring(position, position + 2).toInt()
+                            position++ // Also incremented below
                         }
-                    } else {
-                        // Yes, we have a code set
-                        newCodeSet
-                    }
-                    codeSet = newCodeSet
-                }
-
-                // Get the pattern
-                patterns.add(CODE_PATTERNS[patternIndex])
-
-                // Compute checksum
-                checkSum += patternIndex * checkWeight
-                if (position != 0) {
-                    checkWeight++
-                }
-            }
-            return produceResult(patterns, checkSum)
-        }
-
-        fun produceResult(patterns: MutableCollection<IntArray>, checkSum: Int): BooleanArray {
-            // Compute and append checksum
-            val checkSumMod = checkSum % 103
-            if (checkSumMod < 0) {
-                throw IllegalArgumentException("Unable to compute a valid input checksum")
-            }
-            patterns.add(CODE_PATTERNS[checkSumMod])
-
-            // Append stop code
-            patterns.add(CODE_PATTERNS[CODE_STOP])
-
-            // Compute code width
-            var codeWidth = 0
-            for (pattern in patterns) {
-                for (width in pattern) {
-                    codeWidth += width
-                }
-            }
-
-            // Compute result
-            val result = BooleanArray(codeWidth)
-            var pos = 0
-            for (pattern in patterns) {
-                pos += appendPattern(result, pos, pattern, true)
-            }
-            return result
-        }
-
-        private fun findCType(value: CharSequence, start: Int): CType {
-            val last = value.length
-            if (start >= last) {
-                return CType.UNCODABLE
-            }
-            var c = value[start]
-            if (c == ESCAPE_FNC_1) {
-                return CType.FNC_1
-            }
-            if (c < '0' || c > '9') {
-                return CType.UNCODABLE
-            }
-            if (start + 1 >= last) {
-                return CType.ONE_DIGIT
-            }
-            c = value[start + 1]
-            return if (c < '0' || c > '9') {
-                CType.ONE_DIGIT
-            } else CType.TWO_DIGITS
-        }
-
-        private fun chooseCode(value: CharSequence, start: Int, oldCode: Int): Int {
-            var lookahead = findCType(value, start)
-            if (lookahead == CType.ONE_DIGIT) {
-                return if (oldCode == CODE_CODE_A) {
-                    CODE_CODE_A
-                } else CODE_CODE_B
-            }
-            if (lookahead == CType.UNCODABLE) {
-                if (start < value.length) {
-                    val c = value[start]
-                    if (c < ' ' || oldCode == CODE_CODE_A && (c < '`' || c >= ESCAPE_FNC_1 && c <= ESCAPE_FNC_4)) {
-                        // can continue in code A, encodes ASCII 0 to 95 or FNC1 to FNC4
-                        return CODE_CODE_A
                     }
                 }
-                return CODE_CODE_B // no choice
-            }
-            if (oldCode == CODE_CODE_A && lookahead == CType.FNC_1) {
-                return CODE_CODE_A
-            }
-            if (oldCode == CODE_CODE_C) { // can continue in code C
-                return CODE_CODE_C
-            }
-            if (oldCode == CODE_CODE_B) {
-                if (lookahead == CType.FNC_1) {
-                    return CODE_CODE_B // can continue in code B
-                }
-                // Seen two consecutive digits, see what follows
-                lookahead = findCType(value, start + 2)
-                if (lookahead == CType.UNCODABLE || lookahead == CType.ONE_DIGIT) {
-                    return CODE_CODE_B // not worth switching now
-                }
-                if (lookahead == CType.FNC_1) { // two digits, then FNC_1...
-                    lookahead = findCType(value, start + 3)
-                    return if (lookahead == CType.TWO_DIGITS) { // then two more digits, switch
-                        CODE_CODE_C
-                    } else {
-                        CODE_CODE_B // otherwise not worth switching
+                position++
+            } else {
+                // Should we change the current code?
+                // Do we have a code set?
+                patternIndex = if (codeSet == 0) {
+                    // No, we don't have a code set
+                    when (newCodeSet) {
+                        CODE_CODE_A -> CODE_START_A
+                        CODE_CODE_B -> CODE_START_B
+                        else -> CODE_START_C
                     }
+                } else {
+                    // Yes, we have a code set
+                    newCodeSet
                 }
-                // At this point, there are at least 4 consecutive digits.
-                // Look ahead to choose whether to switch now or on the next round.
-                var index = start + 4
-                while (findCType(value, index).also { lookahead = it } == CType.TWO_DIGITS) {
-                    index += 2
-                }
-                return if (lookahead == CType.ONE_DIGIT) { // odd number of digits, switch later
-                    CODE_CODE_B
-                } else CODE_CODE_C
-                // even number of digits, switch now
+                codeSet = newCodeSet
             }
-            // Here oldCode == 0, which means we are choosing the initial code
-            if (lookahead == CType.FNC_1) { // ignore FNC_1
-                lookahead = findCType(value, start + 1)
+
+            // Get the pattern
+            patterns.add(CODE_PATTERNS[patternIndex])
+
+            // Compute checksum
+            checkSum += patternIndex * checkWeight
+            if (position != 0) {
+                checkWeight++
             }
-            return if (lookahead == CType.TWO_DIGITS) { // at least two digits, start in code C
-                CODE_CODE_C
+        }
+        return produceResult(patterns, checkSum)
+    }
+
+    fun produceResult(patterns: MutableCollection<IntArray>, checkSum: Int): BooleanArray {
+        // Compute and append checksum
+        val checkSumMod = checkSum % 103
+        if (checkSumMod < 0) {
+            throw IllegalArgumentException("Unable to compute a valid input checksum")
+        }
+        patterns.add(CODE_PATTERNS[checkSumMod])
+
+        // Append stop code
+        patterns.add(CODE_PATTERNS[CODE_STOP])
+
+        // Compute code width
+        var codeWidth = 0
+        for (pattern in patterns) {
+            for (width in pattern) {
+                codeWidth += width
+            }
+        }
+
+        // Compute result
+        val result = BooleanArray(codeWidth)
+        var pos = 0
+        for (pattern in patterns) {
+            pos += appendPattern(result, pos, pattern, true)
+        }
+        return result
+    }
+
+    private fun findCType(value: CharSequence, start: Int): CType {
+        val last = value.length
+        if (start >= last) {
+            return CType.UNCODABLE
+        }
+        var c = value[start]
+        if (c == ESCAPE_FNC_1) {
+            return CType.FNC_1
+        }
+        if (c < '0' || c > '9') {
+            return CType.UNCODABLE
+        }
+        if (start + 1 >= last) {
+            return CType.ONE_DIGIT
+        }
+        c = value[start + 1]
+        return if (c < '0' || c > '9') {
+            CType.ONE_DIGIT
+        } else CType.TWO_DIGITS
+    }
+
+    private fun chooseCode(value: CharSequence, start: Int, oldCode: Int): Int {
+        var lookahead = findCType(value, start)
+        if (lookahead == CType.ONE_DIGIT) {
+            return if (oldCode == CODE_CODE_A) {
+                CODE_CODE_A
             } else CODE_CODE_B
         }
+        if (lookahead == CType.UNCODABLE) {
+            if (start < value.length) {
+                val c = value[start]
+                if (c < ' ' || oldCode == CODE_CODE_A && (c < '`' || c >= ESCAPE_FNC_1 && c <= ESCAPE_FNC_4)) {
+                    // can continue in code A, encodes ASCII 0 to 95 or FNC1 to FNC4
+                    return CODE_CODE_A
+                }
+            }
+            return CODE_CODE_B // no choice
+        }
+        if (oldCode == CODE_CODE_A && lookahead == CType.FNC_1) {
+            return CODE_CODE_A
+        }
+        if (oldCode == CODE_CODE_C) { // can continue in code C
+            return CODE_CODE_C
+        }
+        if (oldCode == CODE_CODE_B) {
+            if (lookahead == CType.FNC_1) {
+                return CODE_CODE_B // can continue in code B
+            }
+            // Seen two consecutive digits, see what follows
+            lookahead = findCType(value, start + 2)
+            if (lookahead == CType.UNCODABLE || lookahead == CType.ONE_DIGIT) {
+                return CODE_CODE_B // not worth switching now
+            }
+            if (lookahead == CType.FNC_1) { // two digits, then FNC_1...
+                lookahead = findCType(value, start + 3)
+                return if (lookahead == CType.TWO_DIGITS) { // then two more digits, switch
+                    CODE_CODE_C
+                } else {
+                    CODE_CODE_B // otherwise not worth switching
+                }
+            }
+            // At this point, there are at least 4 consecutive digits.
+            // Look ahead to choose whether to switch now or on the next round.
+            var index = start + 4
+            while (findCType(value, index).also { lookahead = it } == CType.TWO_DIGITS) {
+                index += 2
+            }
+            return if (lookahead == CType.ONE_DIGIT) { // odd number of digits, switch later
+                CODE_CODE_B
+            } else CODE_CODE_C
+            // even number of digits, switch now
+        }
+        // Here oldCode == 0, which means we are choosing the initial code
+        if (lookahead == CType.FNC_1) { // ignore FNC_1
+            lookahead = findCType(value, start + 1)
+        }
+        return if (lookahead == CType.TWO_DIGITS) { // at least two digits, start in code C
+            CODE_CODE_C
+        } else CODE_CODE_B
     }
 }
 

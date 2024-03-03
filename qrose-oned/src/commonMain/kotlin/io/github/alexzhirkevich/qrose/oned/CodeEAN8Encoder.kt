@@ -1,15 +1,12 @@
 package io.github.alexzhirkevich.qrose.oned
 
-internal class CodeEAN8  {
+internal object CodeEAN8Encoder : BarcodeEncoder  {
     private val CODE_WIDTH = 3 + 7 * 4 +  // left bars
             5 + 7 * 4 +  // right bars
             3 // end guard
 
 
-    /**
-     * @return a byte array of horizontal pixels (false = white, true = black)
-     */
-    fun encode(contents: String): BooleanArray {
+    override fun encode(contents: String): BooleanArray {
         var actualContentns = contents
         val length = actualContentns.length
         when (length) {

@@ -6,7 +6,7 @@
 ![badge-macOS](https://img.shields.io/badge/Platform-macOS-purple)
 ![badge-web](https://img.shields.io/badge/Platform-Web-blue)
 
-QR code design library for Compose Multiplatform
+Barcode generation library for Compose Multiplatform
 
 <img width="465" alt="Screenshot 2023-10-10 at 10 34 05" src="https://github.com/alexzhirkevich/qrose/assets/63979218/7469cc1c-d6fd-4dab-997d-f2604dfa49de">
 
@@ -16,6 +16,7 @@ Why QRose?
 - **Efficient** - declare and render codes synchronously right from the composition in 60+ fps;
 - **Scalable** - no raster bitmaps, only scalable vector graphics;
 - **Multiplatform** - supports all the targets supported by Compose Multiplatform.
+- **Multiformat** - multiple formats supported : QR, UPC, EAN, Code 128, etc.
 
 # Installation
 
@@ -23,7 +24,12 @@ Why QRose?
 
 ```gradle
 dependencies {
-    implementation("io.github.alexzhirkevich:qrose:1.0.0-beta3")
+
+    // For QR codes
+    implementation("io.github.alexzhirkevich:qrose:1.0.0")
+    
+    // For single-dimension barcodes (UPC,EAN, Code128, ...)
+    implementation("io.github.alexzhirkevich:qrose:1.0.0-oned")
 }
 ```
 
@@ -31,19 +37,24 @@ dependencies {
 
 ## Basic
 
-You can create code right in composition using `rememberQrCodePainter`.
-Or do it outside of Compose scope by instantiating a `QrCodePainter` class.
+You can create code right in composition using `rememberQrCodePainter`, `rememberBarcodePainter`.
+Or use `QrCodePainter`, `BarcodePainter` to crate it outside compose. 
 
 ```kotlin
 Image(
     painter = rememberQrCodePainter("https://example.com"),
-    contentDescription = "QR code"
+    contentDescription = "QR code referring to the example.com website"
+)
+
+Image(
+    painter = rememberBarcodePainter("9780201379624", BarcodeType.EAN13),
+    contentDescription = "EAN barcode for some product"
 )
 ```
 
 ## Design
 
-There are some overloads of `rememberQrCodePainter` including DSL constructor:
+QR codes have flexible styling options, for example:
 
 ```kotlin
 val logoPainter : Painter = painterResource("logo.png")
