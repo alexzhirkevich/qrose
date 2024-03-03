@@ -16,7 +16,7 @@ Why QRose?
 - **Efficient** - declare and render codes synchronously right from the composition in 60+ fps;
 - **Scalable** - no raster bitmaps, only scalable vector graphics;
 - **Multiplatform** - supports all the targets supported by Compose Multiplatform.
-- **Multiformat** - multiple formats supported : QR, UPC, EAN, Code 128, etc.
+- **Multiformat** - multiple formats supported: `QR`, `UPC`, `EAN`, `Code 128/93/39`, `Codabar`, `ITF`.
 
 # Installation
 
@@ -38,7 +38,7 @@ dependencies {
 ## Basic
 
 You can create code right in composition using `rememberQrCodePainter`, `rememberBarcodePainter`.
-Or use `QrCodePainter`, `BarcodePainter` to crate it outside compose. 
+Or use `QrCodePainter`, `BarcodePainter` to create it outside of Compose. 
 
 ```kotlin
 Image(
