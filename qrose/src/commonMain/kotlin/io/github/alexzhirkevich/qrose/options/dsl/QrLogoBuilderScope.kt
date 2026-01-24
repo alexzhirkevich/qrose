@@ -13,10 +13,10 @@ import io.github.alexzhirkevich.qrose.options.QrLogoShape
  * Can be used without [painter] if you want to place a logo manually.
  * @property shape Shape of the logo padding
  * */
-sealed interface QrLogoBuilderScope  {
-    var painter: Painter?
-    var size : Float
-    var padding : QrLogoPadding
-    var shape: QrLogoShape
+public sealed interface QrLogoBuilderScope  {
+    public var painter: Painter?
+    public var size : Float
+    public var padding : QrLogoPadding
+    public var shape: QrLogoShape
 }
 

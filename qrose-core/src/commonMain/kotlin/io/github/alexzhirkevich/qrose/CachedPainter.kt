@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.toSize
 import kotlin.math.ceil
 
-abstract class CachedPainter : Painter() {
+public abstract class CachedPainter : Painter() {
 
     private var alpha = 1f
     private var colorFilter : ColorFilter?= null
@@ -34,11 +34,12 @@ abstract class CachedPainter : Painter() {
         return true
     }
 
-    abstract fun DrawScope.onCache()
+    public abstract fun DrawScope.onCache()
 
     private val block : DrawScope.() -> Unit = { onCache() }
 
     override fun DrawScope.onDraw() {
+//        return onCache()
         if (cachedSize != size) {
 
             cacheDrawScope.drawCachedImage(

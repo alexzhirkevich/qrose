@@ -11,20 +11,24 @@ import androidx.compose.ui.graphics.Path
 /**
  * Style of the qr-code eye frame.
  */
-interface QrFrameShape : QrShapeModifier {
+@Stable
+public interface QrFrameShape : QrShapeModifier {
 
-    companion object {
-        val Default : QrFrameShape = square()
+    public companion object {
+        public val Default : QrFrameShape = square()
     }
 }
 
-fun QrFrameShape.Companion.square(size: Float = 1f) : QrFrameShape =
+@Stable
+public fun QrFrameShape.Companion.square(size: Float = 1f) : QrFrameShape =
     SquareFrameShape(size)
 
-fun QrFrameShape.Companion.circle(size: Float = 1f) : QrFrameShape =
+@Stable
+public fun QrFrameShape.Companion.circle(size: Float = 1f) : QrFrameShape =
     CircleFrameShape(size)
 
-fun QrFrameShape.Companion.roundCorners(
+@Stable
+public fun QrFrameShape.Companion.roundCorners(
     corner: Float,
     width: Float = 1f,
     topLeft: Boolean = true,
@@ -40,11 +44,12 @@ fun QrFrameShape.Companion.roundCorners(
     bottomRight = bottomRight
 )
 
-fun QrFrameShape.Companion.asPixel(pixelShape: QrPixelShape) : QrFrameShape =
+@Stable
+public fun QrFrameShape.Companion.asPixel(pixelShape: QrPixelShape) : QrFrameShape =
     AsPixelFrameShape(pixelShape)
 
 
-@Immutable
+@Stable
 private class AsPixelFrameShape(
     val pixelShape: QrPixelShape
 ) : QrFrameShape {
@@ -72,6 +77,19 @@ private class AsPixelFrameShape(
                     )
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as AsPixelFrameShape
+
+        return pixelShape == other.pixelShape
+    }
+
+    override fun hashCode(): Int {
+        return 31 * pixelShape.hashCode()
     }
 }
 

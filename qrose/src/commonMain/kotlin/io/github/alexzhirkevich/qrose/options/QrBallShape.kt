@@ -8,20 +8,24 @@ import androidx.compose.ui.graphics.Path
 /**
  * Style of the qr-code eye internal ball.
  * */
-interface QrBallShape : QrShapeModifier {
+@Stable
+public interface QrBallShape : QrShapeModifier {
 
-    companion object {
-        val Default : QrBallShape = square()
+    public companion object {
+        public val Default : QrBallShape = square()
     }
 }
 
-fun QrBallShape.Companion.square(size : Float = 1f) : QrBallShape =
+@Stable
+public fun QrBallShape.Companion.square(size : Float = 1f) : QrBallShape =
     object : QrBallShape, QrShapeModifier by SquareShape(size){}
 
-fun QrBallShape.Companion.circle(size : Float = 1f) : QrBallShape =
+@Stable
+public fun QrBallShape.Companion.circle(size : Float = 1f) : QrBallShape =
     object : QrBallShape, QrShapeModifier by CircleShape(size){}
 
-fun QrBallShape.Companion.roundCorners(
+@Stable
+public fun QrBallShape.Companion.roundCorners(
     radius: Float,
     topLeft: Boolean = true,
     bottomLeft: Boolean = true,
@@ -36,12 +40,13 @@ fun QrBallShape.Companion.roundCorners(
     withNeighbors = false
 ){}
 
-fun QrBallShape.Companion.asPixel(pixelShape: QrPixelShape) : QrBallShape =
+@Stable
+public fun QrBallShape.Companion.asPixel(pixelShape: QrPixelShape) : QrBallShape =
     AsPixelBallShape(pixelShape)
 
 
 
-@Immutable
+@Stable
 private class AsPixelBallShape(
     private val pixelShape: QrPixelShape
 ) : QrBallShape {
@@ -61,5 +66,18 @@ private class AsPixelBallShape(
                 )
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as AsPixelBallShape
+
+        return pixelShape == other.pixelShape
+    }
+
+    override fun hashCode(): Int {
+        return 31 * pixelShape.hashCode()
     }
 }

@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import java.io.ByteArrayOutputStream
 
-actual typealias ImageFormat = Bitmap.CompressFormat
+internal actual typealias ImageFormat = Bitmap.CompressFormat
 
-actual fun ImageBitmap.toByteArray(
+public actual fun ImageBitmap.toByteArray(
     format: ImageFormat
 ): ByteArray {
 

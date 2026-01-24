@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.asSkiaBitmap
 import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skia.Image
 
-actual typealias ImageFormat = EncodedImageFormat
+internal actual typealias ImageFormat = EncodedImageFormat
 
-actual fun ImageBitmap.toByteArray(
+public actual fun ImageBitmap.toByteArray(
     format: ImageFormat
 ): ByteArray {
     val data = Image

@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import io.github.alexzhirkevich.qrose.CachedPainter
 
 
-typealias BarcodePathBuilder = (size : Size, code : BooleanArray) -> Path
+public typealias BarcodePathBuilder = (size : Size, code : BooleanArray) -> Path
 
 /**
  * Remember barcode painter
@@ -32,7 +32,7 @@ typealias BarcodePathBuilder = (size : Size, code : BooleanArray) -> Path
  * */
 @Composable
 @Stable
-fun rememberBarcodePainter(
+public fun rememberBarcodePainter(
     data : String,
     type: BarcodeType,
     brush: Brush = SolidColor(Color.Black),
@@ -67,7 +67,7 @@ fun rememberBarcodePainter(
  * @see rememberBarcodePainter
  * */
 @Immutable
-class BarcodePainter(
+public class BarcodePainter(
     private val code : BooleanArray,
     private val brush: Brush = SolidColor(Color.Black),
     private val builder : BarcodePathBuilder = ::defaultBarcodeBuilder
@@ -83,7 +83,7 @@ class BarcodePainter(
      *
      * @see rememberBarcodePainter
      * */
-    constructor(
+    public constructor(
         data : String,
         type: BarcodeType,
         brush: Brush = SolidColor(Color.Black),

@@ -50,20 +50,20 @@ internal fun rememberCode128Painter(
     }
 }
 
-enum class Code128Type(internal val v: Int) {
+public enum class Code128Type(internal val v: Int) {
     A(Code128Encoder.CODE_CODE_A),
     B(Code128Encoder.CODE_CODE_B),
     C(Code128Encoder.CODE_CODE_C)
 }
 
 @Stable
-fun Code128Painter(
+public fun Code128Painter(
     data : String,
     brush: Brush = SolidColor(Color.Black),
     compact : Boolean = true,
     codeSet : Code128Type? = null,
     builder : BarcodePathBuilder= ::defaultBarcodeBuilder
-) = BarcodePainter(
+): BarcodePainter = BarcodePainter(
     code = Code128Encoder.encode(data, compact, codeSet),
     brush = brush,
     builder = builder

@@ -1,14 +1,11 @@
 package io.github.alexzhirkevich.qrose.options
 
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import io.github.alexzhirkevich.qrose.options.dsl.InternalQrOptionsBuilderScope
 import io.github.alexzhirkevich.qrose.options.dsl.QrOptionsBuilderScope
-import io.github.alexzhirkevich.qrose.options.QrLogo
-import io.github.alexzhirkevich.qrose.options.QrShapes
-import io.github.alexzhirkevich.qrose.options.QrColors
 
-fun QrOptions(block : QrOptionsBuilderScope.() -> Unit) : QrOptions {
+@Stable
+public fun QrOptions(block : QrOptionsBuilderScope.() -> Unit) : QrOptions {
     val builder = QrOptions.Builder()
     InternalQrOptionsBuilderScope(builder).apply(block)
     return builder.build()
@@ -23,48 +20,53 @@ fun QrOptions(block : QrOptionsBuilderScope.() -> Unit) : QrOptions {
  * @param errorCorrectionLevel level of error correction
  * @param fourEyed enable fourth eye
  * */
-@Immutable
-class QrOptions(
-    val shapes: QrShapes = QrShapes(),
-    val colors : QrColors = QrColors(),
-    val logo : QrLogo = QrLogo(),
-    val errorCorrectionLevel: QrErrorCorrectionLevel = QrErrorCorrectionLevel.Auto,
-    val fourEyed : Boolean = false,
+@Stable
+public class QrOptions(
+    public val shapes: QrShapes = QrShapes(),
+    public val colors : QrColors = QrColors(),
+    public val logo : QrLogo = QrLogo(),
+    public val errorCorrectionLevel: QrErrorCorrectionLevel = QrErrorCorrectionLevel.Auto,
+    public val fourEyed : Boolean = false,
 ) {
 
-    fun copy(
+    public fun copy(
         shapes: QrShapes = this.shapes,
         colors : QrColors = this.colors,
         logo : QrLogo = this.logo,
         errorCorrectionLevel: QrErrorCorrectionLevel = this.errorCorrectionLevel,
         fourthEyeEnabled : Boolean = this.fourEyed,
-    ) = QrOptions(
+    ): QrOptions = QrOptions(
         shapes = shapes,
         colors = colors,
         logo = logo,
         errorCorrectionLevel = errorCorrectionLevel,
         fourEyed = fourthEyeEnabled
     )
+//
+//    override fun equals(other: Any?): Boolean {
+//        if (this === other) return true
+//        if (other == null || this::class != other::class) return false
+//
+//        other as QrOptions
+//
+//        if (shapes != other.shapes) return false
+//        if (colors != other.colors) return false
+//        if (logo != other.logo) return false
+//        if (errorCorrectionLevel != other.errorCorrectionLevel) return false
+//        if (fourEyed != other.fourEyed) return false
+//
+//        return true
+//    }
 
+//    override fun hashCode(): Int {
+//        var result = shapes.hashCode()
+//        result = 31 * result + colors.hashCode()
+//        result = 31 * result + logo.hashCode()
+//        result = 31 * result + errorCorrectionLevel.hashCode()
+//        result = 31 * result + fourEyed.hashCode()
+//        return result
+//    }
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is QrOptions)
-            return false
-
-        return shapes == other.shapes &&
-                colors == other.colors &&
-                logo == other.logo &&
-                errorCorrectionLevel == other.errorCorrectionLevel &&
-                fourEyed == other.fourEyed
-    }
-
-    override fun hashCode(): Int {
-        return (((((shapes.hashCode()) * 31) +
-                colors.hashCode()) * 31 +
-                logo.hashCode()) * 31 +
-                errorCorrectionLevel.hashCode()) * 31 +
-                fourEyed.hashCode()
-    }
 
     internal class Builder {
 

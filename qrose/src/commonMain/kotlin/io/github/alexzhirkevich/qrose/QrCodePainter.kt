@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
  * @param options [QrOptions] builder block
  * */
 @Composable
-fun rememberQrCodePainter(
+public fun rememberQrCodePainter(
     data : String,
     vararg keys : Any?,
     options : QrOptionsBuilderScope.() -> Unit
@@ -58,7 +58,7 @@ fun rememberQrCodePainter(
  * @param options QR code styling options
  * */
 @Composable
-fun rememberQrCodePainter(
+public fun rememberQrCodePainter(
     data : String,
     options : QrOptions
 ) : QrCodePainter = remember(data, options) {
@@ -66,7 +66,7 @@ fun rememberQrCodePainter(
 }
 
 @Composable
-fun rememberQrCodePainter(
+public fun rememberQrCodePainter(
     data : String,
     shapes: QrShapes = QrShapes(),
     colors : QrColors = QrColors(),
@@ -90,9 +90,9 @@ fun rememberQrCodePainter(
  * Encodes [data] payload and renders it into the compose [Painter] using styling [options]
  * */
 @Immutable
-class QrCodePainter(
-    val data : String,
-    val options: QrOptions = QrOptions(),
+public class QrCodePainter(
+    public val data : String,
+    public val options: QrOptions = QrOptions(),
 ) : CachedPainter() {
     private val initialMatrixSize : Int
 

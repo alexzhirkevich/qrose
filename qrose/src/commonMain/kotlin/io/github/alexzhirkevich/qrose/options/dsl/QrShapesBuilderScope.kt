@@ -14,11 +14,11 @@ import io.github.alexzhirkevich.qrose.options.QrPixelShape
  * @property ball Shape of the QR code eye balls
  * @property frame Shape of the QR code eye frames
  * */
-sealed interface QrShapesBuilderScope {
-    var darkPixel: QrPixelShape
-    var lightPixel: QrPixelShape
-    var ball: QrBallShape
-    var frame: QrFrameShape
-    var pattern: QrCodeShape
+public sealed interface QrShapesBuilderScope {
+    public var darkPixel: QrPixelShape
+    public var lightPixel: QrPixelShape
+    public var ball: QrBallShape
+    public var frame: QrFrameShape
+    public var pattern: QrCodeShape
 }
 

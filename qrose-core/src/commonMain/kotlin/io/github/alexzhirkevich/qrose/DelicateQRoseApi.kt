@@ -4,4 +4,4 @@ package io.github.alexzhirkevich.qrose
     message = "This API may negatively impact QR code functionality",
     level = RequiresOptIn.Level.WARNING
 )
-annotation class DelicateQRoseApi
+public annotation class DelicateQRoseApi

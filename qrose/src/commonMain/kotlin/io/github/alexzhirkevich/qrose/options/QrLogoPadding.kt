@@ -1,6 +1,5 @@
 package io.github.alexzhirkevich.qrose.options
 
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 
 /**
@@ -8,12 +7,13 @@ import androidx.compose.runtime.Stable
  * Helps to highlight the logo inside the QR code pattern.
  * Padding can be added regardless of the presence of a logo.
  * */
-sealed interface QrLogoPadding {
+@Stable
+public sealed interface QrLogoPadding {
 
     /**
      * Padding size relatively to the size of logo
      * */
-    val size : Float
+    public val size : Float
 
 
     /**
@@ -23,8 +23,8 @@ sealed interface QrLogoPadding {
      * Prefer empty padding if your qr code encodes large amount of data
      * to avoid performance issues.
      * */
-    @Immutable
-    data object Empty : QrLogoPadding {
+    @Stable
+    public data object Empty : QrLogoPadding {
         override val size: Float get() = 0f
     }
 
@@ -32,8 +32,22 @@ sealed interface QrLogoPadding {
     /**
      * Padding will be applied precisely according to the shape of logo
      * */
-    @Immutable
-    class Accurate(override val size: Float) : QrLogoPadding
+    @Stable
+    public class Accurate(override val size: Float) : QrLogoPadding {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Accurate
+
+            return size == other.size
+        }
+
+        override fun hashCode(): Int {
+            return 31 * size.hashCode()
+        }
+    }
 
 
     /**
@@ -42,6 +56,20 @@ sealed interface QrLogoPadding {
      * WARNING: this padding can cause performance issues
      * for QR codes with large amount out data
      * */
-    @Immutable
-    class Natural(override val size: Float) : QrLogoPadding
+    @Stable
+    public class Natural(override val size: Float) : QrLogoPadding {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as Natural
+
+            return size == other.size
+        }
+
+        override fun hashCode(): Int {
+            return 31 * size.hashCode()
+        }
+    }
 }

@@ -13,7 +13,7 @@ import io.github.alexzhirkevich.qrose.qrcode.ErrorCorrectionLevel
  * inside the code as a part of "damage".
  * */
 @Immutable
-enum class QrErrorCorrectionLevel(
+public enum class QrErrorCorrectionLevel(
     internal val lvl : ErrorCorrectionLevel
 ) {
 

@@ -1,6 +1,6 @@
 package io.github.alexzhirkevich.qrose.oned
 
-enum class BarcodeType(val encoder: BarcodeEncoder) {
+public enum class BarcodeType(public val encoder: BarcodeEncoder) {
 
     Codabar(CodabarEncoder),
     Code39(Code39Encoder),

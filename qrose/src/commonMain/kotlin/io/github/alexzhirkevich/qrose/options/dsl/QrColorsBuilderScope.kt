@@ -10,9 +10,9 @@ import io.github.alexzhirkevich.qrose.options.QrBrush
  * @property ball Brush of the QR code eye balls
  * @property frame Brush of the QR code eye frames
  */
-sealed interface QrColorsBuilderScope {
-    var dark: QrBrush
-    var light: QrBrush
-    var frame: QrBrush
-    var ball: QrBrush
+public sealed interface QrColorsBuilderScope {
+    public var dark: QrBrush
+    public var light: QrBrush
+    public var frame: QrBrush
+    public var ball: QrBrush
 }

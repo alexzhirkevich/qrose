@@ -1,19 +1,19 @@
 package io.github.alexzhirkevich.qrose.options
 
 
-class QrCodeMatrix(val size : Int, initialFill : PixelType =  PixelType.Background){
+public class QrCodeMatrix(public val size : Int, initialFill : PixelType =  PixelType.Background){
 
-    constructor(list : List<List<PixelType>>) : this(list.size) {
+    public constructor(list : List<List<PixelType>>) : this(list.size) {
         types = list.flatten().toMutableList()
     }
 
-    enum class PixelType { DarkPixel, LightPixel, Background, Logo }
+    public enum class PixelType { DarkPixel, LightPixel, Background, Logo }
 
     private var types = MutableList(size * size) {
         initialFill
     }
 
-    operator fun get(i : Int, j : Int) : PixelType {
+    public operator fun get(i : Int, j : Int) : PixelType {
 
         val outOfBound = when {
             i !in 0 until size -> i
@@ -29,7 +29,7 @@ class QrCodeMatrix(val size : Int, initialFill : PixelType =  PixelType.Backgrou
         return types[i + j * size]
     }
 
-    operator fun set(i: Int, j: Int, type: PixelType) {
+    public operator fun set(i: Int, j: Int, type: PixelType) {
 
         val outOfBound = when {
             i !in 0 until size -> i
@@ -45,7 +45,7 @@ class QrCodeMatrix(val size : Int, initialFill : PixelType =  PixelType.Backgrou
         types[i + j * size] = type
     }
 
-    fun copy() : QrCodeMatrix = QrCodeMatrix(size).apply {
+    public fun copy() : QrCodeMatrix = QrCodeMatrix(size).apply {
         types = ArrayList(this@QrCodeMatrix.types)
     }
 }

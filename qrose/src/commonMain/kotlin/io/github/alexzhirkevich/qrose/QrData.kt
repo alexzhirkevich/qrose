@@ -1,13 +1,13 @@
 
 package io.github.alexzhirkevich.qrose
 
-object QrData
+public object QrData
 
-fun QrData.text(text: String): String = text
+public fun QrData.text(text: String): String = text
 
-fun QrData.phone(phoneNumber: String) : String  = "TEL:$phoneNumber"
+public fun QrData.phone(phoneNumber: String) : String  = "TEL:$phoneNumber"
 
-fun QrData.email(
+public fun QrData.email(
     email: String,
     copyTo: String? = null,
     subject: String? = null,
@@ -32,7 +32,7 @@ fun QrData.email(
     append(querries.joinToString(separator = "&"))
 }
 
-fun QrData.sms(
+public fun QrData.sms(
     phoneNumber: String,
     subject: String,
     isMMS: Boolean
@@ -40,7 +40,7 @@ fun QrData.sms(
         "$phoneNumber${if (subject.isNotEmpty()) ":$subject" else ""}"
 
 
-fun QrData.meCard(
+public fun QrData.meCard(
     name: String? = null,
     address: String? = null,
     phoneNumber: String? = null,
@@ -62,7 +62,7 @@ fun QrData.meCard(
     append(";")
 }
 
-fun QrData.vCard(
+public fun QrData.vCard(
     name: String? = null,
     company: String? = null,
     title: String? = null,
@@ -101,7 +101,7 @@ fun QrData.vCard(
     append("END:VCARD")
 }
 
-fun QrData.bizCard(
+public fun QrData.bizCard(
     firstName: String? = null,
     secondName: String? = null,
     job: String? = null,
@@ -135,7 +135,7 @@ fun QrData.bizCard(
     append(";")
 }
 
-fun QrData.wifi(
+public fun QrData.wifi(
     authentication: String? = null,
     ssid: String? = null,
     psk: String? = null,
@@ -154,7 +154,7 @@ fun QrData.wifi(
     append("H:$hidden;")
 }
 
-fun QrData.enterpriseWifi(
+public fun QrData.enterpriseWifi(
     ssid: String? = null,
     psk: String? = null,
     hidden: Boolean = false,
@@ -182,7 +182,7 @@ fun QrData.enterpriseWifi(
 }
 
 
-fun QrData.event(
+public fun QrData.event(
     uid: String? = null,
     stamp: String? = null,
     organizer: String? = null,
@@ -209,7 +209,7 @@ fun QrData.event(
     append("END:VEVENT")
 }
 
-fun QrData.location(
+public fun QrData.location(
     lat: Float,
     lon: Float
 ) : String  = "GEO:$lat,$lon"

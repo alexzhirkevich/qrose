@@ -1,6 +1,6 @@
 package io.github.alexzhirkevich.qrose.options
 
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -11,11 +11,12 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.isUnspecified
 import androidx.compose.ui.graphics.painter.Painter
+import io.github.alexzhirkevich.qrose.options.QrBrushMode.Join
 import io.github.alexzhirkevich.qrose.options.QrBrushMode.Separate
 import io.github.alexzhirkevich.qrose.toImageBitmap
 import kotlin.random.Random
 
-enum class QrBrushMode {
+public enum class QrBrushMode {
 
     /**
      * If applied to QR code pattern, the whole pattern will be combined to the single [Path]
@@ -40,29 +41,30 @@ enum class QrBrushMode {
 /**
  * Color [Brush] factory for a QR code part.
  * */
-interface QrBrush  {
+@Stable
+public interface QrBrush  {
 
     /**
      * Brush [mode] indicates the way this brush is applied to the QR code part.
      * */
-    val mode: QrBrushMode
+    public val mode: QrBrushMode
 
     /**
      * Factory method of the [Brush] for the element with given [size] and [neighbors].
      * */
-    fun brush(size: Float, neighbors: Neighbors): Brush
+    public fun brush(size: Float, neighbors: Neighbors): Brush
 
-    companion object {
+    public companion object {
 
         /**
          * Delegates painting to other most suitable brush
          * */
-        val Unspecified : QrBrush = solid(Color.Unspecified)
+        public val Unspecified : QrBrush = solid(Color.Unspecified)
 
         /**
          * Default solid black brush
          * */
-        val Default : QrBrush = solid(Color.Black)
+        public val Default : QrBrush = solid(Color.Black)
     }
 }
 
@@ -70,19 +72,20 @@ interface QrBrush  {
 /**
  * Check if this brush is not specified
  * */
-val QrBrush.isUnspecified
+public val QrBrush.isUnspecified: Boolean
     get() = this === QrBrush.Unspecified || this is Solid && this.color.isUnspecified
 
 /**
  * Check if this brush is specified
  * */
-val QrBrush.isSpecified : Boolean
+public val QrBrush.isSpecified : Boolean
     get() = !isUnspecified
 
 /**
  * [SolidColor] brush from [color]
  * */
-fun QrBrush.Companion.solid(color: Color) : QrBrush = Solid(color)
+@Stable
+public fun QrBrush.Companion.solid(color: Color) : QrBrush = Solid(color)
 
 /**
  * Any Compose brush constructed in [builder] with specific QR code part size.
@@ -99,9 +102,11 @@ fun QrBrush.Companion.solid(color: Color) : QrBrush = Solid(color)
  * }
  * ```
  * */
-fun QrBrush.Companion.brush(
+@Stable
+public fun QrBrush.Companion.brush(
+    mode: QrBrushMode = Join,
     builder: (size : Float) -> Brush
-) : QrBrush = BrushColor(builder)
+) : QrBrush = BrushColor(mode, builder)
 
 /**
  * Random solid color picked from given [probabilities].
@@ -117,7 +122,9 @@ fun QrBrush.Companion.brush(
  *  )
  * ```
  * */
-fun QrBrush.Companion.random(
+
+@Stable
+public fun QrBrush.Companion.random(
     vararg probabilities: Pair<Float, Color>,
     random: Random = Random(13)
 ) : QrBrush = Random(probabilities.toList(), random)
@@ -126,7 +133,8 @@ fun QrBrush.Companion.random(
  * Shader brush that resizes the image [painter] to the required size.
  * [painter] resolution should be square for better result.
  * */
-fun QrBrush.Companion.image(
+@Stable
+public fun QrBrush.Companion.image(
     painter: Painter,
     alpha : Float = 1f,
     colorFilter: ColorFilter? = null
@@ -134,7 +142,7 @@ fun QrBrush.Companion.image(
 
 
 
-@Immutable
+@Stable
 private class Image(
     private val painter: Painter,
     private val alpha : Float = 1f,
@@ -162,20 +170,65 @@ private class Image(
 
         return cachedBrush!!
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Image
+
+        if (painter != other.painter) return false
+        if (alpha != other.alpha) return false
+        if (colorFilter != other.colorFilter) return false
+        if (cachedBrush != other.cachedBrush) return false
+        if (cachedSize != other.cachedSize) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = painter.hashCode()
+        result = 31 * result + alpha.hashCode()
+        result = 31 * result + (colorFilter?.hashCode() ?: 0)
+        result = 31 * result + (cachedBrush?.hashCode() ?: 0)
+        result = 31 * result + cachedSize
+        return result
+    }
+
+
 }
 
-@Immutable
-private class Solid(val color: Color) : QrBrush by BrushColor({ SolidColor(color) })
+@Stable
+private class Solid(val color: Color) : QrBrush by BrushColor(builder = { SolidColor(color) })
 
-@Immutable
-private class BrushColor(private val builder: (size : Float) -> Brush) : QrBrush {
-    override val mode: QrBrushMode
-        get() = QrBrushMode.Join
+@Stable
+private class BrushColor(
+    override val mode: QrBrushMode = QrBrushMode.Join,
+    private val builder: (size : Float) -> Brush
+) : QrBrush {
 
     override fun brush(size: Float, neighbors: Neighbors): Brush = this.builder(size)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as BrushColor
+
+        if (mode != other.mode) return false
+        if (builder != other.builder) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = mode.hashCode()
+        result = 31 * result + builder.hashCode()
+        return result
+    }
 }
 
-@Immutable
+@Stable
 private class Random(
     private val probabilities: List<Pair<Float, Color>>,
     private val random : Random
@@ -194,7 +247,7 @@ private class Random(
     }
 
 
-    override val mode: QrBrushMode = QrBrushMode.Separate
+    override val mode: QrBrushMode = Separate
 
     override fun brush(size: Float, neighbors: Neighbors): Brush {
         val random = random.nextFloat() * _probabilities.last().first.endInclusive
@@ -209,4 +262,28 @@ private class Random(
 
         return SolidColor(probabilities[idx].second)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as io.github.alexzhirkevich.qrose.options.Random
+
+        if (probabilities != other.probabilities) return false
+        if (random != other.random) return false
+        if (_probabilities != other._probabilities) return false
+        if (mode != other.mode) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = probabilities.hashCode()
+        result = 31 * result + random.hashCode()
+        result = 31 * result + _probabilities.hashCode()
+        result = 31 * result + mode.hashCode()
+        return result
+    }
+
+
 }

@@ -19,20 +19,21 @@ import kotlin.random.Random
  * - QR code pattern must always be at the center of the matrix.
  * - QR code matrix is always square.
  * */
-interface QrCodeShape {
+@Stable
+public interface QrCodeShape {
 
     /**
      * How much was QR code size increased in fraction related to default size (1.0).
      * */
-    val shapeSizeIncrease : Float
+    public val shapeSizeIncrease : Float
 
     /**
      * Transform receiver matrix or create new with bigger size.
      * */
-    fun QrCodeMatrix.transform() : QrCodeMatrix
+    public fun QrCodeMatrix.transform() : QrCodeMatrix
 
-    companion object {
-        val Default = object : QrCodeShape{
+    public companion object {
+        public val Default: QrCodeShape = object : QrCodeShape {
             override val shapeSizeIncrease: Float = 1f
 
             override fun QrCodeMatrix.transform(): QrCodeMatrix = this
@@ -40,8 +41,8 @@ interface QrCodeShape {
     }
 }
 
-
-fun QrCodeShape.Companion.circle(
+@Stable
+public fun QrCodeShape.Companion.circle(
     padding : Float = 1.1f,
     precise : Boolean = true,
     random : Random = Random(233),
@@ -51,7 +52,8 @@ fun QrCodeShape.Companion.circle(
     precise = precise
 )
 
-fun QrCodeShape.Companion.hexagon(
+@Stable
+public fun QrCodeShape.Companion.hexagon(
     rotation : Float = 30f,
     precise : Boolean = true,
     random : Random = Random(233),
@@ -62,7 +64,7 @@ fun QrCodeShape.Companion.hexagon(
 )
 
 
-@Immutable
+@Stable
 private class Circle(
     private val padding : Float,
     private val random : Random,
@@ -115,12 +117,36 @@ private class Circle(
         return newMatrix
     }
 
-    fun isInCircle(center : Float, i : Float, j : Float, radius : Float) : Boolean {
+    private fun isInCircle(center : Float, i : Float, j : Float, radius : Float) : Boolean {
         return sqrt((center - i) * (center - i) + (center - j) * (center - j)) < radius
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Circle
+
+        if (padding != other.padding) return false
+        if (random != other.random) return false
+        if (precise != other.precise) return false
+        if (shapeSizeIncrease != other.shapeSizeIncrease) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = padding.hashCode()
+        result = 31 * result + random.hashCode()
+        result = 31 * result + precise.hashCode()
+        result = 31 * result + shapeSizeIncrease.hashCode()
+        return result
+    }
+
+
 }
 
-@Immutable
+@Stable
 private class Hexagon(
     rotationDegree : Float,
     private val random : Random,
@@ -197,6 +223,34 @@ private class Hexagon(
             return x.toDouble() to y.toDouble()
         }
         return  (x * co - y * si) to (x * si + y * co)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Hexagon
+
+        if (random != other.random) return false
+        if (precise != other.precise) return false
+        if (shapeSizeIncrease != other.shapeSizeIncrease) return false
+        if (rad != other.rad) return false
+        if (si != other.si) return false
+        if (co != other.co) return false
+        if (isModulo60 != other.isModulo60) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = random.hashCode()
+        result = 31 * result + precise.hashCode()
+        result = 31 * result + shapeSizeIncrease.hashCode()
+        result = 31 * result + rad.hashCode()
+        result = 31 * result + si.hashCode()
+        result = 31 * result + co.hashCode()
+        result = 31 * result + isModulo60.hashCode()
+        return result
     }
 
 }

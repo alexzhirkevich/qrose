@@ -9,19 +9,19 @@ import androidx.compose.runtime.Stable
  * */
 
 @Immutable
-class Neighbors(
-    val topLeft : Boolean = false,
-    val topRight : Boolean = false,
-    val left : Boolean = false,
-    val top : Boolean = false,
-    val right : Boolean = false,
-    val bottomLeft: Boolean = false,
-    val bottom: Boolean = false,
-    val bottomRight: Boolean = false,
+public class Neighbors(
+    public val topLeft : Boolean = false,
+    public val topRight : Boolean = false,
+    public val left : Boolean = false,
+    public val top : Boolean = false,
+    public val right : Boolean = false,
+    public val bottomLeft: Boolean = false,
+    public val bottom: Boolean = false,
+    public val bottomRight: Boolean = false,
 ) {
 
-    companion object {
-        val Empty = Neighbors()
+    public companion object {
+        public val Empty: Neighbors = Neighbors()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -54,14 +54,14 @@ class Neighbors(
         return result
     }
 }
-val Neighbors.hasAny : Boolean
+public val Neighbors.hasAny : Boolean
     get() = topLeft || topRight || left || top ||
             right || bottomLeft || bottom || bottomRight
 
-val Neighbors.hasAllNearest
+public val Neighbors.hasAllNearest
     get() = top && bottom && left && right
 
-val Neighbors.hasAll : Boolean
+public val Neighbors.hasAll : Boolean
     get() = topLeft && topRight && left && top &&
             right && bottomLeft && bottom && bottomRight
 

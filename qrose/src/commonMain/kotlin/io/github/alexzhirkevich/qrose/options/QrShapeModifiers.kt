@@ -1,12 +1,15 @@
 package io.github.alexzhirkevich.qrose.options
 
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.geometry.*
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 
 
-@Immutable
+@Stable
 internal class SquareShape(
     val size: Float = 1f
 ) : QrShapeModifier {
@@ -22,9 +25,22 @@ internal class SquareShape(
             )
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as SquareShape
+
+        return size == other.size
+    }
+
+    override fun hashCode(): Int {
+        return size.hashCode()
+    }
 }
 
-@Immutable
+@Stable
 internal class CircleShape(
    val size: Float
 ) : QrShapeModifier {
@@ -40,9 +56,22 @@ internal class CircleShape(
             )
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as CircleShape
+
+        return size == other.size
+    }
+
+    override fun hashCode(): Int {
+        return size.hashCode()
+    }
 }
 
-@Immutable
+@Stable
 internal class RoundCornersShape(
     val cornerRadius : Float,
     val withNeighbors : Boolean,
@@ -51,6 +80,7 @@ internal class RoundCornersShape(
     val topRight: Boolean = true,
     val bottomRight: Boolean = true,
 )  : QrShapeModifier {
+
 
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
@@ -72,9 +102,35 @@ internal class RoundCornersShape(
         )
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as RoundCornersShape
+
+        if (cornerRadius != other.cornerRadius) return false
+        if (withNeighbors != other.withNeighbors) return false
+        if (topLeft != other.topLeft) return false
+        if (bottomLeft != other.bottomLeft) return false
+        if (topRight != other.topRight) return false
+        if (bottomRight != other.bottomRight) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = cornerRadius.hashCode()
+        result = 31 * result + withNeighbors.hashCode()
+        result = 31 * result + topLeft.hashCode()
+        result = 31 * result + bottomLeft.hashCode()
+        result = 31 * result + topRight.hashCode()
+        result = 31 * result + bottomRight.hashCode()
+        return result
+    }
+
 }
 
-@Immutable
+@Stable
 internal class VerticalLinesShape(
     private val width : Float
 ) : QrShapeModifier {
@@ -95,9 +151,22 @@ internal class VerticalLinesShape(
             addArc(Rect(Offset(padding, 0f), Size(size - padding * 2, size)), 0f, 180f)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as VerticalLinesShape
+
+        return width == other.width
+    }
+
+    override fun hashCode(): Int {
+        return width.hashCode()
+    }
 }
 
-@Immutable
+@Stable
 internal class HorizontalLinesShape(
     private val width : Float
 ) : QrShapeModifier {
@@ -118,5 +187,18 @@ internal class HorizontalLinesShape(
         } else {
             addArc(Rect(Offset(0f, padding), Size(size, size - padding * 2)), -90f, 180f)
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as HorizontalLinesShape
+
+        return width == other.width
+    }
+
+    override fun hashCode(): Int {
+        return width.hashCode()
     }
 }
