@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Path
 internal class RectangleShape(
     val size: Float = 1f,
     val aspectRatio : Float = 1f,
-    val cornerRadius : Float = 1f,
+    val cornerRadius : Float = 0f,
 ) : QrShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
