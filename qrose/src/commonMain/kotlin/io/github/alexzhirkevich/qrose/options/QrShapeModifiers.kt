@@ -8,6 +8,92 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 
+@Stable
+internal class RectangleShape(
+    val size: Float = 1f,
+    val aspectRatio : Float = 1f,
+) : QrShapeModifier {
+
+    override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
+        val s = size * this@RectangleShape.size.coerceIn(0f, 1f)
+
+        val sizeActual = if (aspectRatio > 1f){
+            Size(s,s / aspectRatio)
+        } else {
+            Size(s * aspectRatio,s)
+        }
+
+        val offset = if (aspectRatio > 1f) {
+            Offset((size - sizeActual.width)/2, 0f)
+        } else {
+            Offset(0f,(size - sizeActual.height)/2)
+        }
+
+        addRect(Rect(offset, sizeActual))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as RectangleShape
+
+        if (size != other.size) return false
+        if (aspectRatio != other.aspectRatio) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = size.hashCode()
+        result = 31 * result + aspectRatio.hashCode()
+        return result
+    }
+}
+
+@Stable
+internal class OvalShape(
+    val size: Float = 1f,
+    val aspectRatio : Float = 1f,
+) : QrShapeModifier {
+
+    override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
+        val s = size * this@OvalShape.size.coerceIn(0f, 1f)
+
+        val sizeActual = if (aspectRatio > 1f){
+            Size(s,s / aspectRatio)
+        } else {
+            Size(s * aspectRatio,s)
+        }
+
+        val offset = if (aspectRatio > 1f) {
+            Offset((size - sizeActual.width)/2, 0f)
+        } else {
+            Offset(0f,(size - sizeActual.height)/2)
+        }
+
+        addOval(Rect(offset, sizeActual))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as RectangleShape
+
+        if (size != other.size) return false
+        if (aspectRatio != other.aspectRatio) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = size.hashCode()
+        result = 31 * result + aspectRatio.hashCode()
+        return result
+    }
+
+}
 
 @Stable
 internal class SquareShape(

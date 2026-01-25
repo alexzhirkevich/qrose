@@ -57,6 +57,30 @@ Image(
 QR codes have flexible styling options, for example:
 
 ```kotlin
+val qrcodePainter = rememberQrCodePainter(
+    data = "https://example.com",
+    ballShape = QrBallShape.circle(),
+    darkPixelShape = QrPixelShape.roundCorners(),
+    frameShape = QrFrameShape.roundCorners(.25f),
+    darkBrush = QrBrush.brush {
+        Brush.linearGradient(
+            0f to Color.Red,
+            1f to Color.Blue,
+            end = Offset(it, it)
+        )
+    },
+    frameBrush = QrBrush.solid(Color.Black),
+    logoPainter = rememberQrCodePainter("123"),
+    logoPadding = QrLogoPadding.Natural(.1f),
+    logoShape = QrLogoShape.circle(),
+    logoSize = 0.2f,
+)
+```
+
+Or with DSL constructor:
+
+
+```kotlin
 val logoPainter : Painter = painterResource("logo.png")
 
 val qrcodePainter : Painter = rememberQrCodePainter("https://example.com") {
@@ -85,16 +109,6 @@ val qrcodePainter : Painter = rememberQrCodePainter("https://example.com") {
 }
 ```
 
-Or just parametrized constructor:
-
-```kotlin
-val qrcodePainter = rememberQrCodePainter(
-    data = "https://example.com",
-    shapes = QrShapes(
-        darkPixel = QrPixelShape.roundCorners()
-    )
-)
-```
 
 ## Customize
 

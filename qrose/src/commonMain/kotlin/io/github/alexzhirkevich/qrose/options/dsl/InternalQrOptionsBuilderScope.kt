@@ -22,12 +22,17 @@ internal class InternalQrOptionsBuilderScope(
             builder.fourthEyeEnabled = value
         }
 
+    override var scale: Float
+        get() = builder.scale
+        set(value) {
+            builder.scale = value
+        }
+
     override fun shapes(
         centralSymmetry : Boolean,
         block: QrShapesBuilderScope.() -> Unit
     ) {
-        InternalQrShapesBuilderScope(builder,centralSymmetry)
-            .apply(block)
+        InternalQrShapesBuilderScope(builder,centralSymmetry).apply(block)
     }
 
     override fun colors(block: QrColorsBuilderScope.() -> Unit) {
@@ -36,7 +41,10 @@ internal class InternalQrOptionsBuilderScope(
 
 
     override fun logo(block: QrLogoBuilderScope.() -> Unit) {
-        InternalQrLogoBuilderScope(builder)
-            .apply(block)
+        InternalQrLogoBuilderScope(builder).apply(block)
+    }
+
+    override fun background(block: QrBackgroundBuilderScope.() -> Unit) {
+        InternalQrBackgroundBuilderScope(builder).apply(block)
     }
 }

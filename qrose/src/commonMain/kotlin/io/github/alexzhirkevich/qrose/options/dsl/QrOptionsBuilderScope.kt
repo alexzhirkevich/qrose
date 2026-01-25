@@ -19,6 +19,11 @@ public sealed interface QrOptionsBuilderScope  {
     public var fourEyed : Boolean
 
     /**
+     *  QR code scale inside the painter. Can be used to add a padding from the image sides
+     * */
+    public var scale : Float
+
+    /**
      * Shapes of the QR code pattern and its parts.
      * */
     public fun shapes(centralSymmetry : Boolean = true, block: QrShapesBuilderScope.() -> Unit)
@@ -32,6 +37,11 @@ public sealed interface QrOptionsBuilderScope  {
      * Middle image.
      * */
     public fun logo(block: QrLogoBuilderScope.() -> Unit)
+
+    /**
+     * Background.
+     * */
+    public fun background(block: QrBackgroundBuilderScope.() -> Unit)
 }
 
 

@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.painter.Painter
  * @param shape shape of the logo padding
  * */
 @Stable
-public data class QrLogo(
+public class QrLogo(
     val painter: Painter? = null,
     val size: Float = 0.25f,
     val padding: QrLogoPadding = QrLogoPadding.Empty,
@@ -41,5 +41,17 @@ public data class QrLogo(
         result = 31 * result + shape.hashCode()
         return result
     }
+
+    fun copy(
+        painter: Painter?= this.painter,
+        size: Float = this.size,
+        padding: QrLogoPadding = this.padding,
+        shape: QrLogoShape = this.shape,
+    ): QrLogo = QrLogo(
+        painter = painter,
+        size = size,
+        padding = padding,
+        shape = shape,
+    )
 }
 

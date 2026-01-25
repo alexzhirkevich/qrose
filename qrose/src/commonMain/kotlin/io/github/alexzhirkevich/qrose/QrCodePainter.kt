@@ -12,18 +12,29 @@ import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import io.github.alexzhirkevich.qrose.options.Neighbors
+import io.github.alexzhirkevich.qrose.options.QrBackground
+import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrBrushMode
 import io.github.alexzhirkevich.qrose.options.QrCodeMatrix
+import io.github.alexzhirkevich.qrose.options.QrCodeShape
 import io.github.alexzhirkevich.qrose.options.QrColors
 import io.github.alexzhirkevich.qrose.options.QrErrorCorrectionLevel
+import io.github.alexzhirkevich.qrose.options.QrFrameShape
 import io.github.alexzhirkevich.qrose.options.QrLogo
 import io.github.alexzhirkevich.qrose.options.QrLogoPadding
+import io.github.alexzhirkevich.qrose.options.QrLogoShape
 import io.github.alexzhirkevich.qrose.options.QrOptions
+import io.github.alexzhirkevich.qrose.options.QrPixelShape
 import io.github.alexzhirkevich.qrose.options.QrShapeModifier
 import io.github.alexzhirkevich.qrose.options.QrShapes
 import io.github.alexzhirkevich.qrose.options.dsl.QrOptionsBuilderScope
@@ -71,20 +82,110 @@ public fun rememberQrCodePainter(
     shapes: QrShapes = QrShapes(),
     colors : QrColors = QrColors(),
     logo : QrLogo = QrLogo(),
+    background : QrBackground = QrBackground(),
     errorCorrectionLevel: QrErrorCorrectionLevel = QrErrorCorrectionLevel.Auto,
     fourEyed : Boolean = false,
+    scale: Float = 1f,
 ) : QrCodePainter = rememberQrCodePainter(
     data = data,
-    options = remember(shapes, colors, logo, errorCorrectionLevel, fourEyed) {
+    options = remember(shapes, colors, logo, background, errorCorrectionLevel, fourEyed, scale) {
         QrOptions(
             shapes = shapes,
             colors = colors,
             logo = logo,
+            background = background,
             errorCorrectionLevel = errorCorrectionLevel,
-            fourEyed = fourEyed
+            fourEyed = fourEyed,
+            scale = scale,
         )
     }
 )
+
+/**
+ * Create and remember QR code painter
+ *
+ * @see QrOptions
+ * */
+@Composable
+public fun rememberQrCodePainter(
+    data : String,
+    codeShape: QrCodeShape = QrCodeShape.Default,
+    darkPixelShape: QrPixelShape = QrPixelShape.Default,
+    lightPixelShape : QrPixelShape = QrPixelShape.Default,
+    ballShape : QrBallShape = QrBallShape.Default,
+    frameShape : QrFrameShape = QrFrameShape.Default,
+    centralSymmetry: Boolean = true,
+    darkBrush : QrBrush = QrBrush.Default,
+    lightBrush : QrBrush = QrBrush.Unspecified,
+    ballBrush : QrBrush = QrBrush.Unspecified,
+    frameBrush : QrBrush = QrBrush.Unspecified,
+    logoPainter: Painter? = null,
+    logoSize: Float = 0.25f,
+    logoPadding: QrLogoPadding = QrLogoPadding.Empty,
+    logoShape: QrLogoShape = QrLogoShape.Default,
+    backgroundPainter : Painter? = null,
+    backgroundFill : Brush? = null,
+    backgroundShape : Shape = RectangleShape,
+    errorCorrectionLevel: QrErrorCorrectionLevel = QrErrorCorrectionLevel.Auto,
+    fourEyed : Boolean = false,
+    scale : Float = 1f,
+) : QrCodePainter {
+
+    val shapes =  remember(
+        codeShape, darkPixelShape, lightPixelShape, ballShape, frameShape, centralSymmetry
+    ) {
+        QrShapes(
+            code = codeShape,
+            darkPixel = darkPixelShape,
+            lightPixel = lightPixelShape,
+            ball = ballShape,
+            frame = frameShape,
+            centralSymmetry = centralSymmetry
+        )
+    }
+    val colors = remember(
+        darkBrush, lightBrush, ballBrush, frameBrush
+    ) {
+        QrColors(
+            dark = darkBrush,
+            light = lightBrush,
+            ball = ballBrush,
+            frame = frameBrush
+        )
+    }
+
+    val logo = remember(
+        logoPainter, logoSize, logoPadding, logoShape
+    ) {
+        QrLogo(
+            painter = logoPainter,
+            size = logoSize,
+            padding = logoPadding,
+            shape = logoShape
+        )
+    }
+
+    val background = remember(
+        backgroundPainter, backgroundFill, backgroundShape
+    ) {
+        QrBackground(
+            painter = backgroundPainter,
+            fill = backgroundFill,
+            shape = backgroundShape
+        )
+    }
+
+    return rememberQrCodePainter(
+        data = data,
+        shapes = shapes,
+        colors = colors,
+        logo = logo,
+        background = background,
+        errorCorrectionLevel = errorCorrectionLevel,
+        fourEyed = fourEyed,
+        scale = scale
+    )
+}
 
 /**
  * Encodes [data] payload and renders it into the compose [Painter] using styling [options]
@@ -160,11 +261,36 @@ public class QrCodePainter(
         return data.hashCode() * 31 + options.hashCode()
     }
 
-    private val DrawScope.logoSize
-        get() = size * options.logo.size
+    private val DrawScope.logoSize: Size
+        get() {
+            if (options.logo.painter == null)
+                return Size.Zero
 
-    private val DrawScope.logoPaddingSize
-        get() = logoSize.width * (1 + options.logo.padding.size)
+            val aspectRatio = options.logo.painter.intrinsicSize.let {
+                it.width / it.height
+            }
+
+            return if (aspectRatio > 1f ) {
+                Size(
+                    size.width * options.logo.size * aspectRatio,
+                    size.height * options.logo.size
+                )
+            } else {
+                Size(
+                    size.width * options.logo.size,
+                    size.height * options.logo.size / aspectRatio
+                )
+            }
+        }
+
+    private val DrawScope.logoPaddingSize: Size
+        get() {
+            val ls = logoSize
+            return Size(
+                ls.width * (1 + options.logo.padding.size),
+                ls.height * (1 + options.logo.padding.size),
+            )
+        }
 
     private val DrawScope.pixelSize : Float
         get() = minOf(size.width, size.height) / codeMatrix.size
@@ -173,43 +299,78 @@ public class QrCodePainter(
     override fun DrawScope.onCache() {
         draw()
     }
+
+    private fun DrawScope.drawBackground(){
+        if (options.background.fill != null){
+            drawRect(options.background.fill)
+        }
+
+        options.background.painter?.run {
+            draw(size)
+        }
+    }
+
     private fun DrawScope.draw() {
 
         val pixelSize = pixelSize
 
         prepareLogo(pixelSize)
 
-        val (dark, light) = createMainElements(pixelSize)
+        scale(options.scale, options.scale, center) {
 
-        if (shouldSeparateDarkPixels || shouldSeparateLightPixels) {
-            drawSeparatePixels(pixelSize)
+            if (options.background.painter != null || options.background.fill != null) {
+
+                if (options.background.shape == RectangleShape) {
+                    drawBackground()
+                } else {
+                    val path = Path().apply {
+                        addOutline(
+                            options.background.shape.createOutline(
+                                size = size,
+                                layoutDirection = layoutDirection,
+                                density = this@draw
+                            )
+                        )
+                    }
+
+                    clipPath(path) {
+                        drawBackground()
+                    }
+                }
+            }
+
+            val (dark, light) = createMainElements(pixelSize)
+
+            if (shouldSeparateDarkPixels || shouldSeparateLightPixels) {
+                drawSeparatePixels(pixelSize)
+            }
+
+            if (!shouldSeparateLightPixels) {
+                drawPath(
+                    path = light,
+                    brush = options.colors.light
+                        .brush(pixelSize * codeMatrix.size, Neighbors.Empty),
+                )
+            }
+
+            if (!shouldSeparateDarkPixels) {
+                drawPath(
+                    path = dark,
+                    brush = options.colors.dark
+                        .brush(pixelSize * codeMatrix.size, Neighbors.Empty),
+                )
+            }
+
+            if (shouldSeparateFrames) {
+                drawFrames(pixelSize)
+            }
+
+            if (shouldSeparateBalls) {
+                drawBalls(pixelSize)
+            }
+
+            drawLogo()
         }
-
-        if (!shouldSeparateLightPixels) {
-            drawPath(
-                path = light,
-                brush = options.colors.light
-                    .brush(pixelSize * codeMatrix.size, Neighbors.Empty),
-            )
-        }
-
-        if (!shouldSeparateDarkPixels) {
-            drawPath(
-                path = dark,
-                brush = options.colors.dark
-                    .brush(pixelSize * codeMatrix.size, Neighbors.Empty),
-            )
-        }
-
-        if (shouldSeparateFrames) {
-            drawFrames(pixelSize)
-        }
-
-        if (shouldSeparateBalls) {
-            drawBalls(pixelSize)
-        }
-
-        drawLogo()
     }
 
     private fun DrawScope.drawSeparatePixels(
@@ -257,13 +418,13 @@ public class QrCodePainter(
 
         if (options.logo.padding is QrLogoPadding.Natural) {
             val logoPath = options.logo.shape.newPath(
-                size = ps,
+                size = ps.maxDimension,
                 neighbors = Neighbors.Empty
             ).apply {
                 translate(
                     Offset(
-                        (size.width - ps) / 2f,
-                        (size.height - ps) / 2f,
+                        (size.width - ps.width) / 2f,
+                        (size.height - ps.height) / 2f,
                     )
                 )
             }
@@ -271,14 +432,25 @@ public class QrCodePainter(
             val darkPathF = darkPixelPathFactory(pixelSize)
             val lightPathF = lightPixelPathFactory(pixelSize)
 
-            val logoPixels = (codeMatrix.size *
-                    options.logo.size.coerceIn(0f, 1f) *
-                    (1 + options.logo.padding.size.coerceIn(0f, 1f))).roundToInt() + 1
+            val logoPixels = (
+                codeMatrix.size *
+                options.logo.size.coerceIn(0f, 1f) *
+                (1 + options.logo.padding.size.coerceIn(0f, 1f))
+            ).roundToInt() + 1
+
+            val ls = logoSize
+            val aspectRatio = ls.width / ls.height
+
+            val (logoX, logoY) = if (aspectRatio > 1f){
+                (logoPixels * aspectRatio).roundToInt() to logoPixels
+            } else {
+                logoPixels to (logoPixels / aspectRatio).roundToInt()
+            }
 
             val xRange =
-                (codeMatrix.size - logoPixels) / 2 until (codeMatrix.size + logoPixels) / 2
+                (codeMatrix.size - logoX) / 2 until (codeMatrix.size + logoX) / 2
             val yRange =
-                (codeMatrix.size - logoPixels) / 2 until (codeMatrix.size + logoPixels) / 2
+                (codeMatrix.size - logoY) / 2 until (codeMatrix.size + logoY) / 2
 
             for (x in xRange) {
                 for (y in yRange) {
@@ -311,13 +483,13 @@ public class QrCodePainter(
 
         if (options.logo.padding is QrLogoPadding.Accurate){
             val path = options.logo.shape.newPath(
-                size = ps,
+                size = ps.maxDimension,
                 neighbors = Neighbors.Empty
             )
 
             translate(
-                left = center.x - ps / 2,
-                top = center.y - ps / 2
+                left = center.x - ps.width / 2,
+                top = center.y - ps.height / 2
             ) {
                 drawPath(path, Color.Black, blendMode = BlendMode.Clear)
             }
@@ -663,6 +835,9 @@ private fun QrErrorCorrectionLevel.fit(
     return if (this == QrErrorCorrectionLevel.Auto)
         when {
             !hasLogo -> QrErrorCorrectionLevel.Low
+            options.logo.painter?.intrinsicSize?.let {
+                (it.maxDimension/it.minDimension) > 1.25f
+            }  == true -> QrErrorCorrectionLevel.High
             logoSize > .3 -> QrErrorCorrectionLevel.High
             logoSize in .2 .. .3 && lvl < ErrorCorrectionLevel.Q ->
                 QrErrorCorrectionLevel.MediumHigh

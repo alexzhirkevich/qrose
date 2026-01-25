@@ -14,6 +14,7 @@ internal class InternalQrLogoBuilderScope(
         set(value) = with(builder) {
             logo = logo.copy(painter = value)
         }
+
     override var size: Float
         get() = builder.logo.size
         set(value) = with(builder) {
