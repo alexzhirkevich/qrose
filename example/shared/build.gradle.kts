@@ -1,28 +1,18 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("org.jetbrains.compose")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.composeCompiler)
+
 }
 
 val _jvmTarget = findProperty("jvmTarget") as String
 
-//@OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-//    targetHierarchy.default()
 
-    jvm("desktop"){
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = _jvmTarget
-            }
-        }
-    }
+    applyDefaultHierarchyTemplate()
+    jvm("desktop"){}
     androidTarget(){
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = _jvmTarget
-            }
-        }
     }
     js(IR){
         browser()
@@ -43,23 +33,44 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        commonMain.dependencies {
+            implementation(project(":qrose"))
+            implementation(project(":qrose-oned"))
+            implementation(compose.ui)
+            implementation(compose.runtime)
+            implementation(compose.material3)
+            implementation(compose.foundation)
+            implementation(compose.components.resources)
+            implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
+
+        }
+
+        val mobileMain by creating {
+            dependsOn(commonMain.get())
+            androidMain.get().dependsOn(this)
+            iosMain.get().dependsOn(this)
+
             dependencies {
-                implementation(project(":qrose"))
-                implementation(project(":qrose-oned"))
-                implementation(compose.ui)
-                implementation(compose.runtime)
-                implementation(compose.material3)
-                implementation(compose.foundation)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
+                implementation("dev.icerock.moko:permissions-compose:0.16.0")
+//                implementation(project(":qrose-scanner"))
             }
+        }
+
+        val desktopMain by getting
+        val wasmJsMain by getting
+
+        val notMobileMain by creating {
+            dependsOn(commonMain.get())
+
+            desktopMain.dependsOn(this)
+            wasmJsMain.dependsOn(this)
+            jsMain.get().dependsOn(this)
         }
     }
 }
 
 android {
-    namespace = "io.github.alexzhirkevich.qrose.example.shared"
+    namespace = "qrose.example.shared"
     compileSdk = 34
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")

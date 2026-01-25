@@ -1,19 +1,20 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.compose")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.composeCompiler)
 }
 
 val _jvmTarget = findProperty("jvmTarget") as String
 
 android {
-    namespace = "io.github.alexzhirkevich.qrose.example.android"
-    compileSdk = 34
+    namespace = "qrose.example.android"
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "io.github.alexzhirkevich.qrose.example.android"
+        applicationId = "qrose.example.android"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -23,9 +24,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(_jvmTarget)
         targetCompatibility = JavaVersion.toVersion(_jvmTarget)
-    }
-    kotlinOptions {
-        jvmTarget = _jvmTarget
     }
     buildTypes {
         getByName("release") {
