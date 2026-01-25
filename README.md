@@ -26,10 +26,10 @@ Why QRose?
 dependencies {
 
     // For QR codes
-    implementation("io.github.alexzhirkevich:qrose:1.0.0")
+    implementation("io.github.alexzhirkevich:qrose:<latest_version>")
     
     // For single-dimension barcodes (UPC,EAN, Code128, ...)
-    implementation("io.github.alexzhirkevich:qrose-oned:1.0.0")
+    implementation("io.github.alexzhirkevich:qrose-oned:<latest_version>")
 }
 ```
 
