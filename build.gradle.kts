@@ -2,6 +2,8 @@
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
 
 
 plugins {
@@ -13,6 +15,21 @@ plugins {
     alias(libs.plugins.composeCompiler).apply(false)
     alias(libs.plugins.mavenPublish)
 
+}
+
+rootProject.projectDir.resolve("local.properties").let {
+    if (it.exists()) {
+        Properties().apply {
+            load(FileInputStream(it))
+        }.forEach { (k,v)-> rootProject.ext.set(k.toString(), v) }
+        System.getenv().forEach { (k,v) ->
+            rootProject.ext.set(k, v)
+        }
+    }
+}
+
+kotlin {
+    jvm()
 }
 
 subprojects {
@@ -32,10 +49,6 @@ subprojects {
     androidLibrarySetup()
     multiplatformSetup()
     publicationSetup()
-}
-
-kotlin {
-    jvm()
 }
 
 fun Project.publicationSetup() {

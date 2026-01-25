@@ -23,10 +23,10 @@ public fun QrData.email(
             add("cc=$copyTo")
         }
         if (subject.isNullOrEmpty().not()) {
-            add("subject=${escape(subject!!)}")
+            add("subject=${escape(subject)}")
         }
         if (body.isNullOrEmpty().not()) {
-            add("body=${escape(body!!)}")
+            add("body=${escape(body)}")
         }
     }
     append(querries.joinToString(separator = "&"))
