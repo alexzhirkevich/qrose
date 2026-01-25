@@ -32,7 +32,7 @@ internal class RectangleShape(
 
         val corner = (cornerRadius.coerceIn(0f, .5f) * size).let { CornerRadius(it, it) }
 
-        if (cornerRadius == 1f) {
+        if (cornerRadius == 0f) {
             addRect(Rect(offset, sizeActual))
         } else {
             addRoundRect(
