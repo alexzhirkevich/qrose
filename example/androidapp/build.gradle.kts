@@ -21,14 +21,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.toVersion(_jvmTarget)
-        targetCompatibility = JavaVersion.toVersion(_jvmTarget)
-    }
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(_jvmTarget))
     }
 }
 

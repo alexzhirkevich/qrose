@@ -18,7 +18,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(compose.ui)
-            implementation(compose.components.resources)
             implementation(project(":example:shared"))
         }
     }
