@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Path
 internal class RectangleShape(
     val size: Float = 1f,
     val aspectRatio : Float = 1f,
+    val cornerRadius : Float = 1f,
 ) : QrShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
@@ -29,7 +30,15 @@ internal class RectangleShape(
             Offset(0f,(size - sizeActual.height)/2)
         }
 
-        addRect(Rect(offset, sizeActual))
+        val corner = (cornerRadius.coerceIn(0f, .5f) * size).let { CornerRadius(it, it) }
+
+        if (cornerRadius == 1f) {
+            addRect(Rect(offset, sizeActual))
+        } else {
+            addRoundRect(
+                RoundRect(Rect(offset, sizeActual), corner)
+            )
+        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -40,6 +49,7 @@ internal class RectangleShape(
 
         if (size != other.size) return false
         if (aspectRatio != other.aspectRatio) return false
+        if (cornerRadius != other.cornerRadius) return false
 
         return true
     }
@@ -47,8 +57,10 @@ internal class RectangleShape(
     override fun hashCode(): Int {
         var result = size.hashCode()
         result = 31 * result + aspectRatio.hashCode()
+        result = 31 * result + cornerRadius.hashCode()
         return result
     }
+
 }
 
 @Stable

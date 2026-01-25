@@ -19,8 +19,8 @@ public fun QrLogoShape.Companion.circle() : QrLogoShape=
     object  : QrLogoShape, QrShapeModifier by CircleShape(1f){}
 
 @Stable
-public fun QrLogoShape.Companion.rect(aspectRatio : Float) : QrLogoShape=
-    object  : QrLogoShape, QrShapeModifier by RectangleShape(1f, aspectRatio){}
+public fun QrLogoShape.Companion.rect(aspectRatio : Float, cornerRadius : Float = 1f) : QrLogoShape=
+    object  : QrLogoShape, QrShapeModifier by RectangleShape(1f, aspectRatio,cornerRadius){}
 
 @Stable
 public fun QrLogoShape.Companion.oval(aspectRatio : Float) : QrLogoShape=
