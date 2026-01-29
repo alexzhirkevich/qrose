@@ -7,7 +7,6 @@
 ![badge-web](https://img.shields.io/badge/Platform-Web-blue)
 
 Barcode generation library for Compose Multiplatform
-
 <img width="465" alt="Screenshot 2023-10-10 at 10 34 05" src="https://github.com/alexzhirkevich/qrose/assets/63979218/7469cc1c-d6fd-4dab-997d-f2604dfa49de">
 
 Why QRose?
@@ -20,7 +19,7 @@ Why QRose?
 
 # Installation
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.alexzhirkevich/qrose)
+[![Maven Central](https://maven-badges.sml.io/maven-central/io.github.alexzhirkevich/qrose/badge.svg)](https://maven-badges.sml.io/maven-central/io.github.alexzhirkevich/qrose)
 
 ```gradle
 dependencies {
