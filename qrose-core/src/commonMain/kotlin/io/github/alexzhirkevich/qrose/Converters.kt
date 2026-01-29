@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
-public expect enum class ImageFormat {
+public enum class ImageFormat {
     PNG, JPEG, WEBP
 }
 
@@ -21,7 +21,11 @@ public expect fun ImageBitmap.toByteArray(format: ImageFormat = ImageFormat.PNG)
 /**
  * Converts [Painter] to image with desired [width], [height] and [format] and returns its bytes.
  * */
-public fun Painter.toByteArray(width : Int, height: Int, format : ImageFormat = ImageFormat.PNG) : ByteArray =
+public fun Painter.toByteArray(
+    width : Int,
+    height: Int,
+    format : ImageFormat = ImageFormat.PNG
+) : ByteArray =
     toImageBitmap(width, height).toByteArray(format)
 
 /**
