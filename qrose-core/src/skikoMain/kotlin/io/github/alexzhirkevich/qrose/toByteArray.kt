@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skia.Image
+import org.jetbrains.skia.impl.use
 
 
 public actual fun ImageBitmap.toByteArray(
@@ -11,7 +12,10 @@ public actual fun ImageBitmap.toByteArray(
 ): ByteArray {
     val data = Image
         .makeFromBitmap(asSkiaBitmap())
-        .encodeToData(format.toSkia()) ?: error("This painter cannot be encoded to $format")
+        .use {
+            it.encodeToData(format.toSkia())
+                ?: error("This bitmap cannot be encoded to $format")
+        }
 
     return data.bytes
 }
