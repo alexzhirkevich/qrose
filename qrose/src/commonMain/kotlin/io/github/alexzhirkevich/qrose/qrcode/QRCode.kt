@@ -36,7 +36,6 @@ internal class QRCode @JvmOverloads constructor(
     }
 
     companion object {
-        const val DEFAULT_CELL_SIZE = 1
         private const val PAD0 = 0xEC
         private const val PAD1 = 0x11
 

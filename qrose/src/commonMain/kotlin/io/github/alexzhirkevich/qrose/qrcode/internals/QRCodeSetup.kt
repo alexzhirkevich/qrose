@@ -12,9 +12,6 @@ import io.github.alexzhirkevich.qrose.qrcode.internals.QRCodeRegion.RIGHT_MID
 import io.github.alexzhirkevich.qrose.qrcode.internals.QRCodeRegion.TOP_LEFT_CORNER
 import io.github.alexzhirkevich.qrose.qrcode.internals.QRCodeRegion.TOP_MID
 import io.github.alexzhirkevich.qrose.qrcode.internals.QRCodeRegion.TOP_RIGHT_CORNER
-import io.github.alexzhirkevich.qrose.qrcode.internals.QRCodeSquareType.POSITION_PROBE
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
 /**
  * Object with helper methods and constants to setup stuff into the QRCode such as Position Probes and Timing Probes.
@@ -66,11 +63,7 @@ internal object QRCodeSetup {
                 val region = findSquareRegion(row, col, probeSize)
 
                 modules[row + rowOffset][col + colOffset] = QRCodeSquare(
-                    dark = isDark,
-                    row = row + rowOffset,
-                    col = col + colOffset,
-                    squareInfo = QRCodeSquareInfo(POSITION_PROBE, region),
-                    moduleSize = modulesSize
+                    dark = isDark
                 )
             }
         }
@@ -128,11 +121,7 @@ internal object QRCodeSetup {
                 for (r in -2..2) {
                     for (c in -2..2) {
                         modules[row + r][col + c] = QRCodeSquare(
-                            dark = r == -2 || r == 2 || c == -2 || c == 2 || r == 0 && c == 0,
-                            row = row + r,
-                            col = col + c,
-                            squareInfo = QRCodeSquareInfo(QRCodeSquareType.POSITION_ADJUST, QRCodeRegion.UNKNOWN),
-                            moduleSize = modules.size
+                            dark = r == -2 || r == 2 || c == -2 || c == 2 || r == 0 && c == 0
                         )
                     }
                 }
@@ -147,11 +136,7 @@ internal object QRCodeSetup {
             }
 
             modules[r][6] = QRCodeSquare(
-                dark = r % 2 == 0,
-                row = r,
-                col = 6,
-                squareInfo = QRCodeSquareInfo(QRCodeSquareType.TIMING_PATTERN, QRCodeRegion.UNKNOWN),
-                moduleSize = modules.size
+                dark = r % 2 == 0
             )
         }
 
@@ -161,11 +146,7 @@ internal object QRCodeSetup {
             }
 
             modules[6][c] = QRCodeSquare(
-                dark = c % 2 == 0,
-                row = 6,
-                col = c,
-                squareInfo = QRCodeSquareInfo(QRCodeSquareType.TIMING_PATTERN, QRCodeRegion.UNKNOWN),
-                moduleSize = modules.size
+                dark = c % 2 == 0
             )
         }
     }
@@ -280,10 +261,7 @@ internal object QRCodeSetup {
             qrCodeSquare.dark = value
         } else {
             modules[row][col] = QRCodeSquare(
-                dark = value,
-                row = row,
-                col = col,
-                moduleSize = modules.size
+                dark = value
             )
         }
     }

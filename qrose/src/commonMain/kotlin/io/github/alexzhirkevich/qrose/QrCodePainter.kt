@@ -312,32 +312,31 @@ public class QrCodePainter(
 
     private fun DrawScope.draw() {
 
-        val pixelSize = pixelSize
+        if (options.background.painter != null || options.background.fill != null) {
 
-        prepareLogo(pixelSize)
-
-        scale(options.scale, options.scale, center) {
-
-            if (options.background.painter != null || options.background.fill != null) {
-
-                if (options.background.shape == RectangleShape) {
-                    drawBackground()
-                } else {
-                    val path = Path().apply {
-                        addOutline(
-                            options.background.shape.createOutline(
-                                size = size,
-                                layoutDirection = layoutDirection,
-                                density = this@draw
-                            )
+            if (options.background.shape === RectangleShape) {
+                drawBackground()
+            } else {
+                val path = Path().apply {
+                    addOutline(
+                        options.background.shape.createOutline(
+                            size = size,
+                            layoutDirection = layoutDirection,
+                            density = this@draw
                         )
-                    }
+                    )
+                }
 
-                    clipPath(path) {
-                        drawBackground()
-                    }
+                clipPath(path) {
+                    drawBackground()
                 }
             }
+        }
+
+        scale(options.scale, options.scale, center) {
+            val pixelSize = pixelSize
+
+            prepareLogo(pixelSize)
 
             val (dark, light) = createMainElements(pixelSize)
 
