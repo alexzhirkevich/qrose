@@ -44,6 +44,7 @@ import io.github.alexzhirkevich.qrose.options.neighbors
 import io.github.alexzhirkevich.qrose.options.newPath
 import io.github.alexzhirkevich.qrose.qrcode.ErrorCorrectionLevel
 import io.github.alexzhirkevich.qrose.qrcode.QRCode
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 /**
@@ -445,7 +446,7 @@ public class QrCodePainter(
 
             val aspectRatio = logoSize
                 .let { it.width / it.height }
-                .takeIf { it.isFinite()  }
+                .takeIf { it.isFinite() && it.absoluteValue > Float.MIN_VALUE }
                 ?: 1f
 
             val (logoX, logoY) = if (aspectRatio > 1f){
@@ -843,9 +844,9 @@ private fun QrErrorCorrectionLevel.fit(
     return if (this == QrErrorCorrectionLevel.Auto)
         when {
             !hasLogo -> QrErrorCorrectionLevel.Low
-            options.logo.painter?.intrinsicSize?.let {
-                (it.maxDimension/it.minDimension) > 1.25f
-            }  == true -> QrErrorCorrectionLevel.High
+            (options.logo.painter?.intrinsicSize?.let {
+                (it.maxDimension / it.minDimension)
+            }?.takeIf { it.isFinite() } ?: 0f) > 1.25f -> QrErrorCorrectionLevel.High
             logoSize > .3 -> QrErrorCorrectionLevel.High
             logoSize in .2 .. .3 && lvl < ErrorCorrectionLevel.Q ->
                 QrErrorCorrectionLevel.MediumHigh
