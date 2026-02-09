@@ -6,19 +6,14 @@ import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.impl.use
 
-
 public actual fun ImageBitmap.toByteArray(
     format: ImageFormat
-): ByteArray {
-    val data = Image
-        .makeFromBitmap(asSkiaBitmap())
-        .use {
-            it.encodeToData(format.toSkia())
-                ?: error("This bitmap cannot be encoded to $format")
-        }
-
-    return data.bytes
-}
+): ByteArray = Image
+    .makeFromBitmap(asSkiaBitmap())
+    .use {
+        it.encodeToData(format.toSkia())?.bytes
+            ?: error("This bitmap cannot be encoded to $format")
+    }
 
 private fun ImageFormat.toSkia() = when(this){
     ImageFormat.PNG -> EncodedImageFormat.PNG

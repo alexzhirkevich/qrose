@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -266,9 +267,11 @@ public class QrCodePainter(
             if (options.logo.painter == null)
                 return Size.Zero
 
-            val aspectRatio = options.logo.painter.intrinsicSize.let {
-                it.width / it.height
-            }
+            val aspectRatio = options.logo.painter.intrinsicSize
+                .takeIf { it.isSpecified}
+                ?.let { it.width / it.height }
+                ?.takeIf { it.isFinite()  }
+                ?: 1f
 
             return if (aspectRatio > 1f ) {
                 Size(
@@ -413,9 +416,12 @@ public class QrCodePainter(
 
     private fun DrawScope.prepareLogo(pixelSize: Float) {
 
+        if (options.logo.painter == null)
+            return
+
         val ps = logoPaddingSize
 
-        if (options.logo.padding is QrLogoPadding.Natural) {
+        if (options.logo.padding is QrLogoPadding.Natural && ps.maxDimension.isFinite()) {
             val logoPath = options.logo.shape.newPath(
                 size = ps.maxDimension,
                 neighbors = Neighbors.Empty
@@ -437,8 +443,10 @@ public class QrCodePainter(
                 (1 + options.logo.padding.size.coerceIn(0f, 1f))
             ).roundToInt() + 1
 
-            val ls = logoSize
-            val aspectRatio = ls.width / ls.height
+            val aspectRatio = logoSize
+                .let { it.width / it.height }
+                .takeIf { it.isFinite()  }
+                ?: 1f
 
             val (logoX, logoY) = if (aspectRatio > 1f){
                 (logoPixels * aspectRatio).roundToInt() to logoPixels
@@ -478,6 +486,9 @@ public class QrCodePainter(
 
     private fun DrawScope.drawLogo() {
 
+        if (options.logo.painter == null)
+            return
+
         val ps = logoPaddingSize
 
         if (options.logo.padding is QrLogoPadding.Accurate){
@@ -494,14 +505,12 @@ public class QrCodePainter(
             }
         }
 
-        options.logo.painter?.let {
-            it.run {
-                translate(
-                    left = center.x - logoSize.width / 2,
-                    top = center.y - logoSize.height / 2
-                ) {
-                    draw(logoSize)
-                }
+        options.logo.painter.run {
+            translate(
+                left = center.x - logoSize.width / 2,
+                top = center.y - logoSize.height / 2
+            ) {
+                draw(logoSize)
             }
         }
     }
