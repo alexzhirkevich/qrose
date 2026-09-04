@@ -23,6 +23,7 @@ rootProject.name = "QRose"
 include(":qrose")
 include(":qrose-core")
 include(":qrose-oned")
+include(":qrose-matrix")
 //include(":qrose-scanner")
 
 include(":example:desktopApp")

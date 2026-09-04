@@ -49,6 +49,9 @@ import io.github.alexzhirkevich.qrose.QrData
 import io.github.alexzhirkevich.qrose.email
 import io.github.alexzhirkevich.qrose.oned.BarcodeType
 import io.github.alexzhirkevich.qrose.oned.rememberBarcodePainter
+import io.github.alexzhirkevich.qrose.matrix.datamatrix.DataMatrixShape
+import io.github.alexzhirkevich.qrose.matrix.rememberAztecPainter
+import io.github.alexzhirkevich.qrose.matrix.rememberDataMatrixPainter
 import io.github.alexzhirkevich.qrose.options.Neighbors
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
@@ -162,6 +165,30 @@ fun AllBarcodes() {
         OnedCode("Code 128", rememberBarcodePainter("test", BarcodeType.Code128))
         OnedCode("Codabar", rememberBarcodePainter("A23342453D", BarcodeType.Codabar))
         OnedCode("QR", rememberQrCodePainter("https://github.com/alexzhirkevich/qrose"))
+        TwodCode("Data Matrix (Square)", rememberDataMatrixPainter("https://github.com/alexzhirkevich/qrose"))
+        TwodCode("Data Matrix (Rect)", rememberDataMatrixPainter("DEMO12345", shape = DataMatrixShape.Rectangle))
+        TwodCode("Aztec", rememberAztecPainter("https://github.com/alexzhirkevich/qrose"))
+    }
+}
+
+@Composable
+fun TwodCode(
+    name: String,
+    code: Painter
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(20.dp)
+            .border(1.dp, Color.Black)
+            .padding(10.dp)
+    ) {
+        Image(
+            painter = code,
+            contentDescription = null,
+            modifier = Modifier.size(150.dp)
+        )
+        Text(name)
     }
 }
 
