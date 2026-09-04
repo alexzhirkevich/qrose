@@ -15,11 +15,11 @@ Why QRose?
 - **Efficient** - declare and render codes synchronously right from the composition in 60+ fps;
 - **Scalable** - no raster bitmaps, only scalable vector graphics;
 - **Multiplatform** - supports all the targets supported by Compose Multiplatform.
-- **Multiformat** - multiple formats supported: `QR`, `UPC`, `EAN`, `Code 128/93/39`, `Codabar`, `ITF`.
+- **Multiformat** - multiple formats supported: `QR`, `Data Matrix`, `Aztec`, `UPC`, `EAN`, `Code 128/93/39`, `Codabar`, `ITF`.
 
 # Installation
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.alexzhirkevich/qrose)](https://central.sonatype.com/artifact/io.github.alexzhirkevich/qrose)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.alexzhirkevich:qrose)](https://central.sonatype.com/artifact/io.github.alexzhirkevich/qrose)
 
 ```gradle
 dependencies {
@@ -27,7 +27,10 @@ dependencies {
     // For QR codes
     implementation("io.github.alexzhirkevich:qrose:<latest_version>")
     
-    // For single-dimension barcodes (UPC,EAN, Code128, ...)
+    // For 2D matrix codes (Data Matrix, Aztec)
+    implementation("io.github.alexzhirkevich:qrose-matrix:<latest_version>")
+
+    // For single-dimension barcodes (UPC, EAN, Code128, ...)
     implementation("io.github.alexzhirkevich:qrose-oned:<latest_version>")
 }
 ```
@@ -36,13 +39,23 @@ dependencies {
 
 ## Basic
 
-You can create code right in composition using `rememberQrCodePainter`, `rememberBarcodePainter`.
-Or use `QrCodePainter`, `BarcodePainter` to create it outside of Compose. 
+You can create code right in composition using `rememberQrCodePainter`, `rememberDataMatrixPainter`, `rememberAztecPainter`, `rememberBarcodePainter`.
+Or use `QrCodePainter`, `DataMatrixPainter`, `AztecPainter`, `BarcodePainter` to create it outside of Compose. 
 
 ```kotlin
 Image(
     painter = rememberQrCodePainter("https://example.com"),
     contentDescription = "QR code referring to the example.com website"
+)
+
+Image(
+    painter = rememberDataMatrixPainter("https://example.com"),
+    contentDescription = "Data Matrix code"
+)
+
+Image(
+    painter = rememberAztecPainter("https://example.com"),
+    contentDescription = "Aztec code"
 )
 
 Image(

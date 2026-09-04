@@ -36,6 +36,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":qrose"))
             implementation(project(":qrose-oned"))
+            implementation(project(":qrose-matrix"))
             implementation(compose.ui)
             implementation(compose.runtime)
             implementation(compose.material3)
