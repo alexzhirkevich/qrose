@@ -1,13 +1,11 @@
 @file:OptIn(ExperimentalResourceApi::class)
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -29,10 +27,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,14 +41,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.qrose.DelicateQRoseApi
-import io.github.alexzhirkevich.qrose.QrData
-import io.github.alexzhirkevich.qrose.email
 import io.github.alexzhirkevich.qrose.oned.BarcodeType
 import io.github.alexzhirkevich.qrose.oned.rememberBarcodePainter
 import io.github.alexzhirkevich.qrose.matrix.datamatrix.DataMatrixShape
 import io.github.alexzhirkevich.qrose.matrix.rememberAztecPainter
 import io.github.alexzhirkevich.qrose.matrix.rememberDataMatrixPainter
-import io.github.alexzhirkevich.qrose.options.Neighbors
+import io.github.alexzhirkevich.qrose.Neighbors
+import io.github.alexzhirkevich.qrose.matrix.MatrixPixelShape
+import io.github.alexzhirkevich.qrose.matrix.circle
+import io.github.alexzhirkevich.qrose.matrix.horizontalLines
+import io.github.alexzhirkevich.qrose.matrix.roundCorners
+import io.github.alexzhirkevich.qrose.matrix.verticalLines
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrBrushMode
@@ -63,7 +62,6 @@ import io.github.alexzhirkevich.qrose.options.QrLogoPadding
 import io.github.alexzhirkevich.qrose.options.QrLogoShape
 import io.github.alexzhirkevich.qrose.options.QrOptions
 import io.github.alexzhirkevich.qrose.options.QrPixelShape
-import io.github.alexzhirkevich.qrose.options.asPixel
 import io.github.alexzhirkevich.qrose.options.brush
 import io.github.alexzhirkevich.qrose.options.circle
 import io.github.alexzhirkevich.qrose.options.hexagon
@@ -71,8 +69,6 @@ import io.github.alexzhirkevich.qrose.options.image
 import io.github.alexzhirkevich.qrose.options.roundCorners
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
-import io.github.alexzhirkevich.qrose.toByteArray
-import io.github.alexzhirkevich.qrose.toImageBitmap
 import io.github.alexzhirkevich.shared.generated.resources.Res
 import io.github.alexzhirkevich.shared.generated.resources.jcbg
 import io.github.alexzhirkevich.shared.generated.resources.jc
@@ -97,7 +93,6 @@ class BrushColor(
 fun App() {
 
     return QrCode()
-
     var page by remember {
         mutableStateOf(Page.Scanner)
     }
@@ -167,7 +162,7 @@ fun AllBarcodes() {
         OnedCode("QR", rememberQrCodePainter("https://github.com/alexzhirkevich/qrose"))
         TwodCode("Data Matrix (Square)", rememberDataMatrixPainter("https://github.com/alexzhirkevich/qrose"))
         TwodCode("Data Matrix (Rect)", rememberDataMatrixPainter("DEMO12345", shape = DataMatrixShape.Rectangle))
-        TwodCode("Aztec", rememberAztecPainter("https://github.com/alexzhirkevich/qrose"))
+        TwodCode("Aztec", rememberAztecPainter("123"))
     }
 }
 
