@@ -56,17 +56,12 @@ internal class QRCode @JvmOverloads constructor(
             }
             val dataLength = qrCodeData.length()
 
-            for (typeNum in 1 until errorCorrectionLevel.maxTypeNum) {
-                if (dataLength <= QRUtil.getMaxLength(typeNum, dataType, errorCorrectionLevel)) {
-                    return typeNum
-                }
-            }
-
-            return 40
+            return (1..errorCorrectionLevel.maxTypeNum)
+                .firstOrNull {
+                    dataLength <= QRUtil.getMaxLength(it, dataType, errorCorrectionLevel)
+                } ?: 40
         }
     }
-
-
 
     @JvmOverloads
     fun encode(
