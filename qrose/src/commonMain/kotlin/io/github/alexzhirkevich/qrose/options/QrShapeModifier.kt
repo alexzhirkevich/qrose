@@ -2,8 +2,10 @@ package io.github.alexzhirkevich.qrose.options
 
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType.Companion.EvenOdd
+import io.github.alexzhirkevich.qrose.Neighbors
+import io.github.alexzhirkevich.qrose.ShapeModifier
 
-public fun interface QrShapeModifier {
+public fun interface QrShapeModifier : ShapeModifier {
 
     /**
      * Modify current path or create new one.
@@ -13,7 +15,7 @@ public fun interface QrShapeModifier {
      *
      * Note: parent path has [EvenOdd] fill type! And this path will inherit it.
      * */
-    public fun Path.path(size : Float, neighbors: Neighbors) : Path
+    public override fun Path.path(size : Float, neighbors: Neighbors) : Path
 }
 
 internal fun QrShapeModifier.newPath(size: Float, neighbors: Neighbors) : Path = Path().apply {

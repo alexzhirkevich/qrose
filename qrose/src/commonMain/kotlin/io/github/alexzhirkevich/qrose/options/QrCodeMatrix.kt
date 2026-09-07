@@ -1,5 +1,7 @@
 package io.github.alexzhirkevich.qrose.options
 
+import io.github.alexzhirkevich.qrose.Neighbors
+
 
 public class QrCodeMatrix(public val size : Int, initialFill : PixelType =  PixelType.Background){
 
@@ -59,12 +61,12 @@ internal fun QrCodeMatrix.neighbors(i : Int, j : Int) : Neighbors {
     return Neighbors(
         topLeft = cmp(i - 1, j - 1),
         topRight = cmp(i + 1, j - 1),
-        left = cmp(i-1, j),
-        top = cmp(i, j-1),
-        right = cmp(i+1, j),
-        bottomLeft = cmp(i-1, j + 1),
-        bottom = cmp(i, j+1),
-        bottomRight = cmp(i+1, j + 1)
+        left = cmp(i - 1, j),
+        top = cmp(i, j - 1),
+        right = cmp(i + 1, j),
+        bottomLeft = cmp(i - 1, j + 1),
+        bottom = cmp(i, j + 1),
+        bottomRight = cmp(i + 1, j + 1)
     )
 }
 

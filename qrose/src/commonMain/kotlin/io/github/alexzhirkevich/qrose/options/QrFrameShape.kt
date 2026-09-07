@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Path
+import io.github.alexzhirkevich.qrose.Neighbors
 
 /**
  * Style of the qr-code eye frame.

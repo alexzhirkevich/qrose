@@ -4,7 +4,7 @@ import io.github.alexzhirkevich.qrose.matrix.Matrix2D
 import io.github.alexzhirkevich.qrose.matrix.common.GenericGF
 import io.github.alexzhirkevich.qrose.matrix.common.ReedSolomonEncoder
 
-public object DataMatrixEncoder {
+internal object DataMatrixEncoder {
 
     public fun encode(
         data: String,

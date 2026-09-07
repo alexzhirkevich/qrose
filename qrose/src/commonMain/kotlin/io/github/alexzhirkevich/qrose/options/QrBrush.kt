@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.isUnspecified
 import androidx.compose.ui.graphics.painter.Painter
+import io.github.alexzhirkevich.qrose.Neighbors
 import io.github.alexzhirkevich.qrose.options.QrBrushMode.Join
 import io.github.alexzhirkevich.qrose.options.QrBrushMode.Separate
 import io.github.alexzhirkevich.qrose.toImageBitmap
@@ -20,17 +21,17 @@ public enum class QrBrushMode {
 
     /**
      * If applied to QR code pattern, the whole pattern will be combined to the single [Path]
-     * and then painted using produced [Brush] with large size and [Neighbors.Empty].
+     * and then painted using produced [Brush] with large size and [io.github.alexzhirkevich.qrose.Neighbors.Empty].
      *
      * Balls and frames with [QrBrush.Unspecified] will also be joined with this path.
-     * If balls or frames have specified [QrBrush] then [Neighbors] parameter will be passed
+     * If balls or frames have specified [QrBrush] then [io.github.alexzhirkevich.qrose.Neighbors] parameter will be passed
      * according to eye position
      * */
     Join,
 
     /**
      * If applied to QR code pattern, each QR code pixel will be painted separately and for each
-     * pixel new [Brush] will be created. In this scenario [Neighbors] parameter for pixels will
+     * pixel new [Brush] will be created. In this scenario [io.github.alexzhirkevich.qrose.Neighbors] parameter for pixels will
      * be chosen according to the actual pixel neighbors.
      *
      * Balls and frames with [QrBrush.Unspecified] will be painted with [QrBrush.Default].

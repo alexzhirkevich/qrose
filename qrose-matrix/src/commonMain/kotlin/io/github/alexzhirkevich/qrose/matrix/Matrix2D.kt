@@ -1,6 +1,7 @@
 package io.github.alexzhirkevich.qrose.matrix
 
 import androidx.compose.runtime.Immutable
+import io.github.alexzhirkevich.qrose.Neighbors
 
 /**
  * 2-dimensional boolean matrix representing barcode modules.
@@ -57,3 +58,23 @@ public class Matrix2D(
         }
     }
 }
+
+
+internal fun Matrix2D.neighbors(i : Int, j : Int) : Neighbors {
+
+    fun cmp(i2 : Int, j2 : Int) = kotlin.runCatching {
+        this[i2,j2] == this[i,j]
+    }.getOrDefault(false)
+
+    return Neighbors(
+        topLeft = cmp(i - 1, j - 1),
+        topRight = cmp(i + 1, j - 1),
+        left = cmp(i - 1, j),
+        top = cmp(i, j - 1),
+        right = cmp(i + 1, j),
+        bottomLeft = cmp(i - 1, j + 1),
+        bottom = cmp(i, j + 1),
+        bottomRight = cmp(i + 1, j + 1)
+    )
+}
+

@@ -3,9 +3,8 @@ package io.github.alexzhirkevich.qrose.matrix.aztec
 import io.github.alexzhirkevich.qrose.matrix.Matrix2D
 import io.github.alexzhirkevich.qrose.matrix.common.GenericGF
 import io.github.alexzhirkevich.qrose.matrix.common.ReedSolomonEncoder
-import kotlin.math.min
 
-public object AztecEncoder {
+internal object AztecEncoder {
 
     public const val DEFAULT_EC_PERCENT: Int = 33
     public const val DEFAULT_LAYERS: Int = 0
@@ -111,14 +110,15 @@ public object AztecEncoder {
             for (i in -center..center) {
                 for (j in -center..center) {
                     if (i % 16 == 0 || j % 16 == 0) {
-                        matrix[center + i, center + j] = ((center + i) % 2 == 0) xor ((center + j) % 2 == 0)
+                        matrix[center + i, center + j] =
+                            ((center + i) % 2 == 0) xor ((center + j) % 2 == 0)
                     }
                 }
             }
         }
 
         // Draw bullseye
-        drawBullsEye(matrix, matrixSize / 2, if (compact) 4 else 6)
+        drawBullsEye(matrix, matrixSize / 2, if (compact) 5 else 7)
 
         // Draw mode message
         drawModeMessage(matrix, compact, matrixSize, modeMessage, alignmentMap)
@@ -176,7 +176,11 @@ public object AztecEncoder {
         return out
     }
 
-    private fun generateCheckWords(stuffedBits: BooleanArrayList, totalBitsInSymbol: Int, wordSize: Int): BooleanArrayList {
+    private fun generateCheckWords(
+        stuffedBits: BooleanArrayList,
+        totalBitsInSymbol: Int,
+        wordSize: Int
+    ): BooleanArrayList {
         val messageSizeInWords = stuffedBits.size / wordSize
         val totalWords = totalBitsInSymbol / wordSize
         val eccWords = totalWords - messageSizeInWords
@@ -213,7 +217,11 @@ public object AztecEncoder {
         return messageBits
     }
 
-    private fun generateModeMessage(compact: Boolean, layers: Int, messageSizeInWords: Int): BooleanArrayList {
+    private fun generateModeMessage(
+        compact: Boolean,
+        layers: Int,
+        messageSizeInWords: Int
+    ): BooleanArrayList {
         val modeMessage = BooleanArrayList()
         if (compact) {
             modeMessage.appendBits(layers - 1, 2)
@@ -226,7 +234,11 @@ public object AztecEncoder {
         }
     }
 
-    private fun generateCheckWordsMode(stuffedBits: BooleanArrayList, totalBits: Int, wordSize: Int): BooleanArrayList {
+    private fun generateCheckWordsMode(
+        stuffedBits: BooleanArrayList,
+        totalBits: Int,
+        wordSize: Int
+    ): BooleanArrayList {
         val messageSizeInWords = stuffedBits.size / wordSize
         val totalWords = totalBits / wordSize
         val eccWords = totalWords - messageSizeInWords
@@ -279,18 +291,58 @@ public object AztecEncoder {
         if (compact) {
             for (i in 0 until 7) {
                 val offset = center - 3 + i
-                if (modeMessage[i]) matrix[alignmentMap[offset], alignmentMap[center - 5]] = true
-                if (modeMessage[i + 7]) matrix[alignmentMap[center + 5], alignmentMap[offset]] = true
-                if (modeMessage[i + 14]) matrix[alignmentMap[offset], alignmentMap[center + 5]] = true
-                if (modeMessage[i + 21]) matrix[alignmentMap[center - 5], alignmentMap[offset]] = true
+                if (modeMessage[i]) {
+                    matrix[
+                        alignmentMap[offset],
+                        alignmentMap[center - 5]
+                    ] = true
+                }
+                if (modeMessage[i + 7]) {
+                    matrix[
+                        alignmentMap[center + 5],
+                        alignmentMap[offset]
+                    ] = true
+                }
+                if (modeMessage[20 - i]) {
+                    matrix[
+                        alignmentMap[offset],
+                        alignmentMap[center + 5]
+                    ] = true
+                }
+                if (modeMessage[27 - i]) {
+                    matrix[
+                        alignmentMap[center - 5],
+                        alignmentMap[offset]
+                    ] = true
+                }
             }
         } else {
             for (i in 0 until 10) {
                 val offset = center - 5 + i + i / 5
-                if (modeMessage[i]) matrix[alignmentMap[offset], alignmentMap[center - 7]] = true
-                if (modeMessage[i + 10]) matrix[alignmentMap[center + 7], alignmentMap[offset]] = true
-                if (modeMessage[i + 20]) matrix[alignmentMap[offset], alignmentMap[center + 7]] = true
-                if (modeMessage[i + 30]) matrix[alignmentMap[center - 7], alignmentMap[offset]] = true
+                if (modeMessage[i]) {
+                    matrix[
+                        alignmentMap[offset],
+                        alignmentMap[center - 7]
+                    ] = true
+                }
+                if (modeMessage[i + 10]) {
+                    matrix[
+                        alignmentMap[center + 7],
+                        alignmentMap[offset]
+                    ] = true
+                }
+                if (modeMessage[29 - i]) {
+                    matrix[
+                        alignmentMap[offset],
+                        alignmentMap[center + 7]
+                    ] = true
+                }
+                if (modeMessage[39 - i]) {
+                    matrix[
+                        alignmentMap[center - 7],
+                        alignmentMap[offset]
+                    ] = true
+                }
             }
         }
     }
@@ -302,24 +354,37 @@ public object AztecEncoder {
         alignmentMap: IntArray,
         messageBits: BooleanArrayList
     ) {
-        val center = alignmentMap.size / 2
+        val baseMatrixSize = (if (compact) 11 else 14) + layers * 4 // not including alignment lines
+
         var rowOffset = 0
         for (i in 0 until layers) {
             val rowSize = (layers - i) * 4 + if (compact) 9 else 12
             for (j in 0 until rowSize) {
-                val k = j * 2
-                for (bit in 0 until 2) {
-                    if (rowOffset + k + bit < messageBits.size && messageBits[rowOffset + k + bit]) {
-                        matrix[alignmentMap[center - (layers - i) * 2 - (if (compact) 4 else 6) + bit], alignmentMap[center - (layers - i) * 2 - (if (compact) 4 else 6) + j]] = true
+                val columnOffset = j * 2
+                for (k in 0 until 2) {
+                    if (messageBits[rowOffset + columnOffset + k]) {
+                        matrix[
+                            alignmentMap[i * 2 + k],
+                            alignmentMap[i * 2 + j]
+                        ] = true;
                     }
-                    if (rowOffset + rowSize * 2 + k + bit < messageBits.size && messageBits[rowOffset + rowSize * 2 + k + bit]) {
-                        matrix[alignmentMap[center - (layers - i) * 2 - (if (compact) 4 else 6) + j], alignmentMap[center + (layers - i) * 2 + (if (compact) 4 else 6) - 1 - bit]] = true
+                    if (messageBits[rowOffset + rowSize * 2 + columnOffset + k]) {
+                        matrix[
+                            alignmentMap[i * 2 + j],
+                            alignmentMap[baseMatrixSize - 1 - i * 2 - k]
+                        ] = true;
                     }
-                    if (rowOffset + rowSize * 4 + k + bit < messageBits.size && messageBits[rowOffset + rowSize * 4 + k + bit]) {
-                        matrix[alignmentMap[center + (layers - i) * 2 + (if (compact) 4 else 6) - 1 - bit], alignmentMap[center + (layers - i) * 2 + (if (compact) 4 else 6) - 1 - j]] = true
+                    if (messageBits[rowOffset + rowSize * 4 + columnOffset + k]) {
+                        matrix[
+                            alignmentMap[baseMatrixSize - 1 - i * 2 - k],
+                            alignmentMap[baseMatrixSize - 1 - i * 2 - j]
+                        ] = true;
                     }
-                    if (rowOffset + rowSize * 6 + k + bit < messageBits.size && messageBits[rowOffset + rowSize * 6 + k + bit]) {
-                        matrix[alignmentMap[center + (layers - i) * 2 + (if (compact) 4 else 6) - 1 - j], alignmentMap[center - (layers - i) * 2 - (if (compact) 4 else 6) + bit]] = true
+                    if (messageBits[rowOffset + rowSize * 6 + columnOffset + k]) {
+                        matrix[
+                            alignmentMap[baseMatrixSize - 1 - i * 2 - j],
+                            alignmentMap[i * 2 + k]
+                        ] = true;
                     }
                 }
             }

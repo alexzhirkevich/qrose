@@ -51,13 +51,23 @@ public open class MatrixBarcodePainter(
         }
 
         val path = Path()
+        val tmpPath = Path()
         for (y in 0 until matrix.height) {
             for (x in 0 until matrix.width) {
                 if (matrix[x, y]) {
-                    val px = offsetX + (x + quietZone) * moduleSize
-                    val py = offsetY + (y + quietZone) * moduleSize
+
                     with(pixelShape) {
-                        path.addPixel(px, py, moduleSize, moduleSize)
+                        tmpPath.rewind()
+                        path.addPath(
+                            path = tmpPath.path(
+                                size = moduleSize,
+                                neighbors = matrix.neighbors(x,y)
+                            ),
+                            offset = Offset(
+                                x = offsetX + (x + quietZone) * moduleSize,
+                                y = offsetY + (y + quietZone) * moduleSize
+                            )
+                        )
                     }
                 }
             }

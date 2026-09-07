@@ -1,52 +1,42 @@
 package io.github.alexzhirkevich.qrose.matrix
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Path
+import io.github.alexzhirkevich.qrose.CircleShape
+import io.github.alexzhirkevich.qrose.HorizontalLinesShape
+import io.github.alexzhirkevich.qrose.RectangleShape
+import io.github.alexzhirkevich.qrose.RoundCornersShape
+import io.github.alexzhirkevich.qrose.ShapeModifier
+import io.github.alexzhirkevich.qrose.SquareShape
+import io.github.alexzhirkevich.qrose.VerticalLinesShape
 
 @Immutable
-public interface MatrixPixelShape {
+public interface MatrixPixelShape : ShapeModifier {
 
-    public fun Path.addPixel(x: Float, y: Float, width: Float, height: Float): Path
-
-    public object Default : MatrixPixelShape {
-        override fun Path.addPixel(x: Float, y: Float, width: Float, height: Float): Path = apply {
-            addRect(Rect(x, y, x + width, y + height))
-        }
-    }
-
-    @Immutable
-    public class RoundCorners(
-        public val cornerRatio: Float = 0.35f
-    ) : MatrixPixelShape {
-        override fun Path.addPixel(x: Float, y: Float, width: Float, height: Float): Path = apply {
-            val rx = width * cornerRatio.coerceIn(0f, 0.5f)
-            val ry = height * cornerRatio.coerceIn(0f, 0.5f)
-            addRoundRect(
-                RoundRect(
-                    left = x,
-                    top = y,
-                    right = x + width,
-                    bottom = y + height,
-                    radiusX = rx,
-                    radiusY = ry
-                )
-            )
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is RoundCorners) return false
-            return cornerRatio == other.cornerRatio
-        }
-
-        override fun hashCode(): Int = cornerRatio.hashCode()
-    }
-
-    public object Circle : MatrixPixelShape {
-        override fun Path.addPixel(x: Float, y: Float, width: Float, height: Float): Path = apply {
-            addOval(Rect(x, y, x + width, y + height))
-        }
+    companion object {
+        public val Default : MatrixPixelShape = square()
     }
 }
+
+@Stable
+public fun MatrixPixelShape.Companion.square(size: Float = 1f) : MatrixPixelShape =
+    object : MatrixPixelShape, ShapeModifier by SquareShape(size) {}
+
+@Stable
+public fun MatrixPixelShape.Companion.circle(size: Float = 1f) : MatrixPixelShape =
+    object : MatrixPixelShape, ShapeModifier by CircleShape(size) {}
+
+@Stable
+public fun MatrixPixelShape.Companion.roundCorners(radius : Float = .5f) : MatrixPixelShape =
+    object : MatrixPixelShape, ShapeModifier by RoundCornersShape(radius, true) {}
+
+@Stable
+public fun MatrixPixelShape.Companion.verticalLines(width : Float = 1f) : MatrixPixelShape =
+    object : MatrixPixelShape, ShapeModifier by VerticalLinesShape(width) {}
+
+@Stable
+public fun MatrixPixelShape.Companion.horizontalLines(width : Float = 1f) : MatrixPixelShape =
+    object : MatrixPixelShape, ShapeModifier by HorizontalLinesShape(width) {}

@@ -132,9 +132,9 @@ internal object HighLevelEncoder {
             if (buffer.length % 3 == 0) {
                 val newMode = lookAheadTest(context.msg, context.pos, C40_ENCODATION)
                 if (newMode != C40_ENCODATION) {
+                    writeC40Buffer(context, buffer)
                     context.writeCodeword(C40_UNLATCH)
                     context.encodingMode = ASCII_ENCODATION
-                    writeC40Buffer(context, buffer)
                     return
                 }
             }
@@ -215,9 +215,9 @@ internal object HighLevelEncoder {
             if (buffer.length % 3 == 0) {
                 val newMode = lookAheadTest(context.msg, context.pos, TEXT_ENCODATION)
                 if (newMode != TEXT_ENCODATION) {
+                    writeTextBuffer(context, buffer)
                     context.writeCodeword(C40_UNLATCH)
                     context.encodingMode = ASCII_ENCODATION
-                    writeTextBuffer(context, buffer)
                     return
                 }
             }

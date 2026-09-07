@@ -1,4 +1,4 @@
-package io.github.alexzhirkevich.qrose.options
+package io.github.alexzhirkevich.qrose
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.CornerRadius
@@ -9,11 +9,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 
 @Stable
-internal class RectangleShape(
+public class RectangleShape(
     val size: Float = 1f,
     val aspectRatio : Float = 1f,
     val cornerRadius : Float = 0f,
-) : QrShapeModifier {
+) : ShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
         val s = size * this@RectangleShape.size.coerceIn(0f, 1f)
@@ -64,10 +64,10 @@ internal class RectangleShape(
 }
 
 @Stable
-internal class OvalShape(
+public class OvalShape(
     val size: Float = 1f,
     val aspectRatio : Float = 1f,
-) : QrShapeModifier {
+) : ShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
         val s = size * this@OvalShape.size.coerceIn(0f, 1f)
@@ -108,9 +108,9 @@ internal class OvalShape(
 }
 
 @Stable
-internal class SquareShape(
+public class SquareShape(
     val size: Float = 1f
-) : QrShapeModifier {
+) : ShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
         val s = size * this@SquareShape.size.coerceIn(0f, 1f)
@@ -139,9 +139,9 @@ internal class SquareShape(
 }
 
 @Stable
-internal class CircleShape(
+public class CircleShape(
    val size: Float
-) : QrShapeModifier {
+) : ShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
         val s = size * this@CircleShape.size.coerceIn(0f, 1f)
@@ -170,14 +170,14 @@ internal class CircleShape(
 }
 
 @Stable
-internal class RoundCornersShape(
+public class RoundCornersShape(
     val cornerRadius : Float,
     val withNeighbors : Boolean,
     val topLeft: Boolean = true,
     val bottomLeft: Boolean = true,
     val topRight: Boolean = true,
     val bottomRight: Boolean = true,
-)  : QrShapeModifier {
+)  : ShapeModifier {
 
 
 
@@ -229,9 +229,9 @@ internal class RoundCornersShape(
 }
 
 @Stable
-internal class VerticalLinesShape(
+public class VerticalLinesShape(
     private val width : Float
-) : QrShapeModifier {
+) : ShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
 
@@ -265,9 +265,9 @@ internal class VerticalLinesShape(
 }
 
 @Stable
-internal class HorizontalLinesShape(
+public class HorizontalLinesShape(
     private val width : Float
-) : QrShapeModifier {
+) : ShapeModifier {
 
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
 

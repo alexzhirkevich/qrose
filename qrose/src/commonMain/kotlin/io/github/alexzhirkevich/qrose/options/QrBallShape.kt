@@ -1,9 +1,13 @@
 package io.github.alexzhirkevich.qrose.options
 
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
+import io.github.alexzhirkevich.qrose.CircleShape
+import io.github.alexzhirkevich.qrose.Neighbors
+import io.github.alexzhirkevich.qrose.RoundCornersShape
+import io.github.alexzhirkevich.qrose.ShapeModifier
+import io.github.alexzhirkevich.qrose.SquareShape
 
 /**
  * Style of the qr-code eye internal ball.
@@ -18,11 +22,11 @@ public interface QrBallShape : QrShapeModifier {
 
 @Stable
 public fun QrBallShape.Companion.square(size : Float = 1f) : QrBallShape =
-    object : QrBallShape, QrShapeModifier by SquareShape(size){}
+    object : QrBallShape, QrShapeModifier, ShapeModifier by SquareShape(size) {}
 
 @Stable
 public fun QrBallShape.Companion.circle(size : Float = 1f) : QrBallShape =
-    object : QrBallShape, QrShapeModifier by CircleShape(size){}
+    object : QrBallShape, QrShapeModifier, ShapeModifier by CircleShape(size) {}
 
 @Stable
 public fun QrBallShape.Companion.roundCorners(
@@ -31,14 +35,14 @@ public fun QrBallShape.Companion.roundCorners(
     bottomLeft: Boolean = true,
     topRight: Boolean = true,
     bottomRight: Boolean = true,
-) : QrBallShape = object : QrBallShape, QrShapeModifier by RoundCornersShape(
+) : QrBallShape = object : QrBallShape, QrShapeModifier, ShapeModifier by RoundCornersShape(
     cornerRadius = radius,
     topLeft = topLeft,
     bottomLeft = bottomLeft,
     topRight = topRight,
     bottomRight = bottomRight,
     withNeighbors = false
-){}
+) {}
 
 @Stable
 public fun QrBallShape.Companion.asPixel(pixelShape: QrPixelShape) : QrBallShape =

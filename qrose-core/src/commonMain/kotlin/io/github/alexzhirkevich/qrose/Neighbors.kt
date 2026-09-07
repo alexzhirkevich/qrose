@@ -1,7 +1,6 @@
-package io.github.alexzhirkevich.qrose.options
+package io.github.alexzhirkevich.qrose
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 
 
 /**
