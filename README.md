@@ -19,7 +19,7 @@ Why QRose?
 
 # Installation
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.alexzhirkevich:qrose)](https://central.sonatype.com/artifact/io.github.alexzhirkevich/qrose)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.alexzhirkevich/qrose)](https://central.sonatype.com/artifact/io.github.alexzhirkevich/qrose)  
 
 ```gradle
 dependencies {
