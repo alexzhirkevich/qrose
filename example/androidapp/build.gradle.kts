@@ -9,12 +9,12 @@ val _jvmTarget = findProperty("jvmTarget") as String
 
 android {
     namespace = "qrose.example.android"
-    compileSdk = 36
+    compileSdk = findProperty("android.compileSdk").toString().toInt()
 
     defaultConfig {
         applicationId = "qrose.example.android"
-        minSdk = 24
-        targetSdk = 36
+        minSdk = findProperty("android.minSdk").toString().toInt()
+        targetSdk = findProperty("android.targetSdk").toString().toInt()
         versionCode = 1
         versionName = "1.0"
 
