@@ -128,9 +128,7 @@ fun Project.multiplatformSetup() {
         }
 
         iosArm64()
-        iosX64()
         iosSimulatorArm64()
-        macosX64()
         macosArm64()
 
         js(IR) {
