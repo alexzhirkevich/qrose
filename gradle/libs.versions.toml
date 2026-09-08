@@ -1,7 +1,7 @@
 [versions]
 kotlin="2.4.0"
 compose="1.12.0"
-agp = "8.12.1"
+agp = "9.3.2"
 camera2 = "1.3.2"
 mlkit = "17.2.0"
 maven-publish="0.34.0"

@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "qrose.example.android"
-        minSdk = findProperty("android.minSdk").toString().toInt()
+        minSdk = 24
         targetSdk = findProperty("android.targetSdk").toString().toInt()
         versionCode = 1
         versionName = "1.0"
@@ -39,4 +39,5 @@ dependencies {
     implementation(project(":example:shared"))
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.0")
+    testImplementation("junit:junit:4.13.2")
 }
