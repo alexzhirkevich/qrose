@@ -46,6 +46,7 @@ import io.github.alexzhirkevich.qrose.oned.rememberBarcodePainter
 import io.github.alexzhirkevich.qrose.matrix.datamatrix.DataMatrixShape
 import io.github.alexzhirkevich.qrose.matrix.rememberAztecPainter
 import io.github.alexzhirkevich.qrose.matrix.rememberDataMatrixPainter
+import io.github.alexzhirkevich.qrose.matrix.rememberPdf417Painter
 import io.github.alexzhirkevich.qrose.Neighbors
 import io.github.alexzhirkevich.qrose.matrix.MatrixPixelShape
 import io.github.alexzhirkevich.qrose.matrix.circle
@@ -163,6 +164,8 @@ fun AllBarcodes() {
         TwodCode("Data Matrix (Square)", rememberDataMatrixPainter("https://github.com/alexzhirkevich/qrose"))
         TwodCode("Data Matrix (Rect)", rememberDataMatrixPainter("DEMO12345", shape = DataMatrixShape.Rectangle))
         TwodCode("Aztec", rememberAztecPainter("123"))
+        OnedCode("PDF417", rememberPdf417Painter("https://github.com/alexzhirkevich/qrose"))
+        OnedCode("Compact PDF417", rememberPdf417Painter("QRose PDF417", compact = true))
     }
 }
 
