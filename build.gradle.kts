@@ -2,6 +2,9 @@
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -30,6 +33,18 @@ rootProject.projectDir.resolve("local.properties").let {
 
 kotlin {
     jvm()
+}
+
+allprojects {
+    afterEvaluate {
+        val prepareModel = tasks.findByName("prepareKotlinBuildScriptModel")
+            ?: tasks.register("prepareKotlinBuildScriptModel").get()
+
+        val generateMetadata = tasks.findByName("generateProjectStructureMetadata")
+        if (generateMetadata != null) {
+            prepareModel.dependsOn(generateMetadata)
+        }
+    }
 }
 
 subprojects {
@@ -86,6 +101,14 @@ fun Project.publicationSetup() {
 
 fun Project.multiplatformSetup() {
     project.kotlin {
+
+        @OptIn(ExternalKotlinTargetApi::class)
+        IdeMultiplatformImport.instance(project).registerDependencyResolver(
+            resolver = IdeDependencyResolver.empty,
+            constraint = IdeMultiplatformImport.SourceSetConstraint.isSharedNative,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            priority = IdeMultiplatformImport.Priority.high
+        )
 
         applyDefaultHierarchyTemplate {
             common {
@@ -150,7 +173,7 @@ fun Project.androidLibrarySetup() {
         compileSdk = (findProperty("android.compileSdk") as String).toInt()
 
         defaultConfig {
-            minSdk = (findProperty("android.minSdk") as String).toInt()
+            minSdk = 24
         }
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8

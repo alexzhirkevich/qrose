@@ -1,6 +1,9 @@
-@file:OptIn(ExperimentalWasmDsl::class)
+@file:OptIn(ExperimentalWasmDsl::class, ExternalKotlinTargetApi::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -13,6 +16,13 @@ plugins {
 val _jvmTarget = findProperty("jvmTarget") as String
 
 kotlin {
+
+    IdeMultiplatformImport.instance(project).registerDependencyResolver(
+        resolver = IdeDependencyResolver.empty,
+        constraint = IdeMultiplatformImport.SourceSetConstraint.isSharedNative,
+        phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+        priority = IdeMultiplatformImport.Priority.high
+    )
 
     applyDefaultHierarchyTemplate()
     jvm("desktop"){}
@@ -76,11 +86,7 @@ kotlin {
 
 android {
     namespace = "qrose.example.shared"
-    compileSdk = 34
-
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
-    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(_jvmTarget)
