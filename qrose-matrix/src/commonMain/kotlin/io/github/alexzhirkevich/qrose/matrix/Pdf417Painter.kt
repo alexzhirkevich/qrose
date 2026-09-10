@@ -8,6 +8,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -78,14 +79,16 @@ public open class Pdf417Painter(
     backgroundBrush: Brush? = null,
     pixelShape: MatrixPixelShape = MatrixPixelShape.Default,
     quietZone: Int = 2,
-    public val rowHeightRatio: Float = 3.0f,
+    rowHeightRatio: Float = 3.0f,
 ) : MatrixBarcodePainter(
     matrix = matrix,
     brush = brush,
     backgroundBrush = backgroundBrush,
     pixelShape = pixelShape,
-    quietZone = quietZone
+    quietZone = quietZone,
+    rowHeightRatio = rowHeightRatio
 ) {
+
     public constructor(
         data: String,
         errorCorrectionLevel: Pdf417ErrorCorrectionLevel = Pdf417ErrorCorrectionLevel.Auto,
@@ -111,69 +114,4 @@ public open class Pdf417Painter(
         quietZone = quietZone,
         rowHeightRatio = rowHeightRatio
     )
-
-    override val intrinsicSize: Size = Size(
-        (matrix.width + quietZone * 2) * 4f,
-        (matrix.height * rowHeightRatio + quietZone * 2) * 4f
-    )
-
-    override fun DrawScope.onCache() {
-        val totalCols = matrix.width + quietZone * 2
-        val totalHeightUnits = matrix.height * rowHeightRatio + quietZone * 2
-
-        val moduleWidth = min(size.width / totalCols, size.height / totalHeightUnits)
-        val moduleHeight = moduleWidth * rowHeightRatio
-
-        val actualWidth = moduleWidth * totalCols
-        val actualHeight = totalHeightUnits * moduleWidth
-        val offsetX = (size.width - actualWidth) / 2f
-        val offsetY = (size.height - actualHeight) / 2f
-
-        if (backgroundBrush != null) {
-            drawRect(
-                brush = backgroundBrush,
-                topLeft = Offset(offsetX, offsetY),
-                size = Size(actualWidth, actualHeight)
-            )
-        }
-
-        val path = Path()
-        for (y in 0 until matrix.height) {
-            val rowY = offsetY + (quietZone + y * rowHeightRatio) * moduleWidth
-            var x = 0
-            while (x < matrix.width) {
-                if (matrix[x, y]) {
-                    var runLen = 1
-                    while (x + runLen < matrix.width && matrix[x + runLen, y]) {
-                        runLen++
-                    }
-                    val colX = offsetX + (x + quietZone) * moduleWidth
-                    path.addRect(
-                        Rect(
-                            offset = Offset(colX, rowY),
-                            size = Size(runLen * moduleWidth, moduleHeight)
-                        )
-                    )
-                    x += runLen
-                } else {
-                    x++
-                }
-            }
-        }
-
-        drawPath(path = path, brush = brush)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Pdf417Painter) return false
-        if (rowHeightRatio != other.rowHeightRatio) return false
-        return super.equals(other)
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + rowHeightRatio.hashCode()
-        return result
-    }
 }
