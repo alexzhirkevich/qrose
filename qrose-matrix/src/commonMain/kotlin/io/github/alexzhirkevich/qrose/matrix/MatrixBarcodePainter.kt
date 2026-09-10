@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -22,23 +23,26 @@ public open class MatrixBarcodePainter(
     public val backgroundBrush: Brush? = null,
     public val pixelShape: MatrixPixelShape = MatrixPixelShape.Default,
     public val quietZone: Int = 0,
+    public val rowHeightRatio : Float = 1f,
 ) : CachedPainter() {
 
     override val intrinsicSize: Size = Size(
-        (matrix.width + quietZone * 2) * 10f,
-        (matrix.height + quietZone * 2) * 10f
+        (matrix.width + quietZone * 2) * 4f,
+        (matrix.height * rowHeightRatio + quietZone * 2) * 4f
     )
+
+    private val scaleMatrix = Matrix().apply {
+        scale(1f, rowHeightRatio)
+    }
 
     override fun DrawScope.onCache() {
         val totalCols = matrix.width + quietZone * 2
-        val totalRows = matrix.height + quietZone * 2
+        val totalHeightUnits = matrix.height * rowHeightRatio + quietZone * 2
 
-        val moduleWidth = size.width / totalCols
-        val moduleHeight = size.height / totalRows
-        val moduleSize = min(moduleWidth, moduleHeight)
+        val moduleWidth = min(size.width / totalCols, size.height / totalHeightUnits)
 
-        val actualWidth = moduleSize * totalCols
-        val actualHeight = moduleSize * totalRows
+        val actualWidth = moduleWidth * totalCols
+        val actualHeight = totalHeightUnits * moduleWidth
         val offsetX = (size.width - actualWidth) / 2f
         val offsetY = (size.height - actualHeight) / 2f
 
@@ -55,17 +59,20 @@ public open class MatrixBarcodePainter(
         for (y in 0 until matrix.height) {
             for (x in 0 until matrix.width) {
                 if (matrix[x, y]) {
-
                     with(pixelShape) {
                         tmpPath.rewind()
                         path.addPath(
                             path = tmpPath.path(
-                                size = moduleSize,
+                                size = moduleWidth,
                                 neighbors = matrix.neighbors(x,y)
-                            ),
+                            ).apply {
+                                if (rowHeightRatio != 1f){
+                                    transform(scaleMatrix)
+                                }
+                            },
                             offset = Offset(
-                                x = offsetX + (x + quietZone) * moduleSize,
-                                y = offsetY + (y + quietZone) * moduleSize
+                                x = offsetX + (x + quietZone) * moduleWidth,
+                                y = offsetY + (quietZone + y * rowHeightRatio) * moduleWidth
                             )
                         )
                     }
@@ -84,6 +91,8 @@ public open class MatrixBarcodePainter(
         if (backgroundBrush != other.backgroundBrush) return false
         if (pixelShape != other.pixelShape) return false
         if (quietZone != other.quietZone) return false
+        if (rowHeightRatio != other.rowHeightRatio) return false
+
         return true
     }
 
@@ -93,6 +102,7 @@ public open class MatrixBarcodePainter(
         result = 31 * result + (backgroundBrush?.hashCode() ?: 0)
         result = 31 * result + pixelShape.hashCode()
         result = 31 * result + quietZone
+        result = 31 * result + rowHeightRatio.hashCode()
         return result
     }
 }
