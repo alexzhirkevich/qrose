@@ -54,9 +54,12 @@ public class QrCodeMatrix(public val size : Int, initialFill : PixelType =  Pixe
 
 internal fun QrCodeMatrix.neighbors(i : Int, j : Int) : Neighbors {
 
-    fun cmp(i2 : Int, j2 : Int) = kotlin.runCatching {
-        this[i2,j2] == this[i,j]
-    }.getOrDefault(false)
+    fun cmp(i2: Int, j2: Int): Boolean {
+        if (i2 !in 0 until size || j2 !in 0 until size) {
+            return false
+        }
+        return this[i2, j2] == this[i, j]
+    }
 
     return Neighbors(
         topLeft = cmp(i - 1, j - 1),
