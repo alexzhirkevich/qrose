@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,18 +40,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import io.github.alexzhirkevich.qrose.DelicateQRoseApi
-import io.github.alexzhirkevich.qrose.oned.BarcodeType
-import io.github.alexzhirkevich.qrose.oned.rememberBarcodePainter
-import io.github.alexzhirkevich.qrose.matrix.datamatrix.DataMatrixShape
+import io.github.alexzhirkevich.qrose.Neighbors
+import io.github.alexzhirkevich.qrose.matrix.DataMatrixShape
+import io.github.alexzhirkevich.qrose.matrix.MatrixPixelShape
 import io.github.alexzhirkevich.qrose.matrix.rememberAztecPainter
 import io.github.alexzhirkevich.qrose.matrix.rememberDataMatrixPainter
 import io.github.alexzhirkevich.qrose.matrix.rememberPdf417Painter
-import io.github.alexzhirkevich.qrose.Neighbors
-import io.github.alexzhirkevich.qrose.matrix.MatrixPixelShape
-import io.github.alexzhirkevich.qrose.matrix.circle
-import io.github.alexzhirkevich.qrose.matrix.horizontalLines
-import io.github.alexzhirkevich.qrose.matrix.roundCorners
 import io.github.alexzhirkevich.qrose.matrix.verticalLines
+import io.github.alexzhirkevich.qrose.oned.BarcodeType
+import io.github.alexzhirkevich.qrose.oned.rememberBarcodePainter
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrBrushMode
@@ -71,8 +67,8 @@ import io.github.alexzhirkevich.qrose.options.roundCorners
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.github.alexzhirkevich.shared.generated.resources.Res
-import io.github.alexzhirkevich.shared.generated.resources.jcbg
 import io.github.alexzhirkevich.shared.generated.resources.jc
+import io.github.alexzhirkevich.shared.generated.resources.jcbg
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -93,7 +89,7 @@ class BrushColor(
 @Composable
 fun App() {
 
-    return QrCode()
+    return AllBarcodes()
     var page by remember {
         mutableStateOf(Page.Scanner)
     }
@@ -160,12 +156,13 @@ fun AllBarcodes() {
         OnedCode("Code 93", rememberBarcodePainter("TEST", BarcodeType.Code93))
         OnedCode("Code 128", rememberBarcodePainter("test", BarcodeType.Code128))
         OnedCode("Codabar", rememberBarcodePainter("A23342453D", BarcodeType.Codabar))
-        OnedCode("QR", rememberQrCodePainter("https://github.com/alexzhirkevich/qrose"))
-        TwodCode("Data Matrix (Square)", rememberDataMatrixPainter("https://github.com/alexzhirkevich/qrose"))
-        TwodCode("Data Matrix (Rect)", rememberDataMatrixPainter("DEMO12345", shape = DataMatrixShape.Rectangle))
-        TwodCode("Aztec", rememberAztecPainter("123"))
         OnedCode("PDF417", rememberPdf417Painter("https://github.com/alexzhirkevich/qrose"))
         OnedCode("Compact PDF417", rememberPdf417Painter("QRose PDF417", compact = true))
+        OnedCode("Data Matrix (Rect)", rememberDataMatrixPainter("DEMO12345", shape = DataMatrixShape.Rectangle))
+        TwodCode("Data Matrix (Square)", rememberDataMatrixPainter("https://github.com/alexzhirkevich/qrose"))
+        TwodCode("QR", rememberQrCodePainter("https://github.com/alexzhirkevich/qrose"))
+        TwodCode("Aztec", rememberAztecPainter("123"))
+
     }
 }
 
@@ -206,8 +203,8 @@ fun OnedCode(
             painter = code,
             contentDescription = null,
             modifier = Modifier
-                .width(300.dp)
-                .height(100.dp)
+//                .width(500.dp)
+                .height(200.dp)
         )
         Text(name)
     }
