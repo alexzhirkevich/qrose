@@ -3,20 +3,13 @@ package io.github.alexzhirkevich.qrose.matrix
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import io.github.alexzhirkevich.qrose.QroseEncoders
 import io.github.alexzhirkevich.qrose.matrix.pdf417.Pdf417Compaction
 import io.github.alexzhirkevich.qrose.matrix.pdf417.Pdf417Dimensions
-import io.github.alexzhirkevich.qrose.matrix.pdf417.Pdf417Encoder
 import io.github.alexzhirkevich.qrose.matrix.pdf417.Pdf417ErrorCorrectionLevel
-import kotlin.math.min
 
 /**
  * Remember PDF417 barcode painter.
@@ -36,7 +29,7 @@ public fun rememberPdf417Painter(
     data: String,
     errorCorrectionLevel: Pdf417ErrorCorrectionLevel = Pdf417ErrorCorrectionLevel.Auto,
     compaction: Pdf417Compaction = Pdf417Compaction.Auto,
-    dimensions: Pdf417Dimensions = Pdf417Dimensions(),
+    dimensions: Pdf417Dimensions = Pdf417Dimensions.Default,
     compact: Boolean = false,
     rowHeightRatio: Float = 3.0f,
     brush: Brush = SolidColor(Color.Black),
@@ -93,7 +86,7 @@ public open class Pdf417Painter(
         data: String,
         errorCorrectionLevel: Pdf417ErrorCorrectionLevel = Pdf417ErrorCorrectionLevel.Auto,
         compaction: Pdf417Compaction = Pdf417Compaction.Auto,
-        dimensions: Pdf417Dimensions = Pdf417Dimensions(),
+        dimensions: Pdf417Dimensions = Pdf417Dimensions.Default,
         compact: Boolean = false,
         rowHeightRatio: Float = 3.0f,
         brush: Brush = SolidColor(Color.Black),
@@ -101,13 +94,12 @@ public open class Pdf417Painter(
         pixelShape: MatrixPixelShape = MatrixPixelShape.Default,
         quietZone: Int = 2,
     ) : this(
-        matrix = Pdf417Encoder.encode(
-            data = data,
+        matrix = QroseEncoders.PDF417(
             errorCorrectionLevel = errorCorrectionLevel,
             compaction = compaction,
             dimensions = dimensions,
             compact = compact
-        ),
+        ).encode(data),
         brush = brush,
         backgroundBrush = backgroundBrush,
         pixelShape = pixelShape,

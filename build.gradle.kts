@@ -173,7 +173,7 @@ fun Project.androidLibrarySetup() {
         compileSdk = (findProperty("android.compileSdk") as String).toInt()
 
         defaultConfig {
-            minSdk = 24
+            minSdk = findProperty("android.minSdk").toString().toInt()
         }
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8

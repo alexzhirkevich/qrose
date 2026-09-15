@@ -21,6 +21,9 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
+import io.github.alexzhirkevich.qrose.matrix.Matrix2D
+import io.github.alexzhirkevich.qrose.matrix.QR
+import io.github.alexzhirkevich.qrose.matrix.qr.QrErrorCorrection
 import io.github.alexzhirkevich.qrose.options.QrBackground
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
@@ -41,8 +44,6 @@ import io.github.alexzhirkevich.qrose.options.dsl.QrOptionsBuilderScope
 import io.github.alexzhirkevich.qrose.options.isSpecified
 import io.github.alexzhirkevich.qrose.options.neighbors
 import io.github.alexzhirkevich.qrose.options.newPath
-import io.github.alexzhirkevich.qrose.qrcode.ErrorCorrectionLevel
-import io.github.alexzhirkevich.qrose.qrcode.QRCode
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -200,13 +201,11 @@ public class QrCodePainter(
 
     private val actualCodeMatrix = options.shapes.code.run {
 
-        val initialMatrix = QRCode(
-            data = data,
-            errorCorrectionLevel =
+        val initialMatrix = QroseEncoders.QR(
             if (options.errorCorrectionLevel == QrErrorCorrectionLevel.Auto)
                 options.errorCorrectionLevel.fit(options).lvl
             else options.errorCorrectionLevel.lvl
-        ).encode()
+        ).encode(data).toQrMatrix()
 
         initialMatrixSize = initialMatrix.size
 
@@ -814,6 +813,20 @@ private class Recreating<T>(
     override fun isInitialized(): Boolean = true
 }
 
+private fun Matrix2D.toQrMatrix() : QrCodeMatrix {
+    val matrix = QrCodeMatrix(width)
+
+    for (x in 0 until width) {
+        for (y in 0 until height) {
+            matrix[x, y] = if (get(x, y))
+                QrCodeMatrix.PixelType.DarkPixel
+            else QrCodeMatrix.PixelType.LightPixel
+        }
+    }
+
+    return matrix
+}
+
 private fun Neighbors.Companion.forEyeWithNumber(number : Int, fourthEyeEnabled : Boolean) : Neighbors {
     return when (number) {
         0 -> Neighbors(bottom = true, right = true, bottomRight = fourthEyeEnabled)
@@ -847,9 +860,9 @@ private fun QrErrorCorrectionLevel.fit(
                 (it.maxDimension / it.minDimension)
             }?.takeIf { it.isFinite() } ?: 0f) > 1.25f -> QrErrorCorrectionLevel.High
             logoSize > .3 -> QrErrorCorrectionLevel.High
-            logoSize in .2 .. .3 && lvl < ErrorCorrectionLevel.Q ->
+            logoSize in .2 .. .3 && lvl < QrErrorCorrection.Q ->
                 QrErrorCorrectionLevel.MediumHigh
-            logoSize > .05f && lvl < ErrorCorrectionLevel.M ->
+            logoSize > .05f && lvl < QrErrorCorrection.M ->
                 QrErrorCorrectionLevel.Medium
             else -> this
         } else this

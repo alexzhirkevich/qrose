@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.ui)
             api(project(":qrose-core"))
+            api(project(":qrose-encoder-matrix"))
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

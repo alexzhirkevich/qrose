@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "qrose.example.android"
-        minSdk = 24
+        minSdk = findProperty("android.minSdk").toString().toInt()
         targetSdk = findProperty("android.targetSdk").toString().toInt()
         versionCode = 1
         versionName = "1.0"

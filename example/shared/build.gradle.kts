@@ -94,6 +94,6 @@ android {
     }
 
     defaultConfig {
-        minSdk = 24
+        minSdk = findProperty("android.minSdk").toString().toInt()
     }
 }

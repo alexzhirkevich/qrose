@@ -6,33 +6,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import io.github.alexzhirkevich.qrose.matrix.aztec.AztecEncoder
+import io.github.alexzhirkevich.qrose.QroseEncoders
+import io.github.alexzhirkevich.qrose.matrix.aztec.AztecDefaultEcPrecent
+import io.github.alexzhirkevich.qrose.matrix.aztec.AztecDefaultLayers
 
 /**
  * Remember Aztec barcode painter.
  *
  * @param data payload string
  * @param errorCorrectionPercent minimum error correction percentage (default 33)
- * @param userSpecifiedLayers optional explicit layer count (positive for full, negative for compact, 0 for auto)
+ * @param layers optional explicit layer count (positive for full, negative for compact, 0 for auto)
  * @param brush module brush (solid color or gradient)
  * @param backgroundBrush optional background brush
- * @param pixelShape module shape ([MatrixPixelShape.Default], [MatrixPixelShape.RoundCorners], [MatrixPixelShape.Circle])
+ * @param pixelShape module shape
  * @param quietZone margin around the code in module units (Aztec standard specifies 0 quiet zone)
  */
 @Composable
 public fun rememberAztecPainter(
     data: String,
-    errorCorrectionPercent: Int = AztecEncoder.DEFAULT_EC_PERCENT,
-    userSpecifiedLayers: Int = AztecEncoder.DEFAULT_LAYERS,
+    errorCorrectionPercent: Int = AztecDefaultEcPrecent,
+    layers: Int = AztecDefaultLayers,
     brush: Brush = SolidColor(Color.Black),
     backgroundBrush: Brush? = null,
     pixelShape: MatrixPixelShape = MatrixPixelShape.Default,
     quietZone: Int = 0,
-): AztecPainter = remember(data, errorCorrectionPercent, userSpecifiedLayers, brush, backgroundBrush, pixelShape, quietZone) {
+): AztecPainter = remember(data, errorCorrectionPercent, layers, brush, backgroundBrush, pixelShape, quietZone) {
     AztecPainter(
         data = data,
         errorCorrectionPercent = errorCorrectionPercent,
-        userSpecifiedLayers = userSpecifiedLayers,
+        layers = layers,
         brush = brush,
         backgroundBrush = backgroundBrush,
         pixelShape = pixelShape,
@@ -46,14 +48,16 @@ public fun rememberAztecPainter(
 @Immutable
 public class AztecPainter(
     public val data: String,
-    public val errorCorrectionPercent: Int = AztecEncoder.DEFAULT_EC_PERCENT,
-    public val userSpecifiedLayers: Int = AztecEncoder.DEFAULT_LAYERS,
+    public val errorCorrectionPercent: Int = AztecDefaultEcPrecent,
+    public val layers: Int = AztecDefaultLayers,
     brush: Brush = SolidColor(Color.Black),
     backgroundBrush: Brush? = null,
     pixelShape: MatrixPixelShape = MatrixPixelShape.Default,
     quietZone: Int = 0,
 ) : MatrixBarcodePainter(
-    matrix = AztecEncoder.encode(data, errorCorrectionPercent, userSpecifiedLayers),
+    matrix = QroseEncoders
+        .Aztec(errorCorrectionPercent, layers)
+        .encode(data),
     brush = brush,
     backgroundBrush = backgroundBrush,
     pixelShape = pixelShape,
@@ -66,7 +70,7 @@ public class AztecPainter(
         if (other !is AztecPainter) return false
         if (data != other.data) return false
         if (errorCorrectionPercent != other.errorCorrectionPercent) return false
-        if (userSpecifiedLayers != other.userSpecifiedLayers) return false
+        if (layers != other.layers) return false
         return super.equals(other)
     }
 
@@ -74,7 +78,7 @@ public class AztecPainter(
         var result = super.hashCode()
         result = 31 * result + data.hashCode()
         result = 31 * result + errorCorrectionPercent.hashCode()
-        result = 31 * result + userSpecifiedLayers.hashCode()
+        result = 31 * result + layers.hashCode()
         return result
     }
 }

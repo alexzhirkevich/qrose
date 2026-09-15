@@ -6,17 +6,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import io.github.alexzhirkevich.qrose.matrix.datamatrix.DataMatrixEncoder
-import io.github.alexzhirkevich.qrose.matrix.datamatrix.DataMatrixShape
+import io.github.alexzhirkevich.qrose.QroseEncoders
 
 /**
  * Remember Data Matrix barcode painter.
  *
  * @param data payload string
- * @param shape shape hint ([DataMatrixShape.Auto], [DataMatrixShape.Square], [DataMatrixShape.Rectangle])
+ * @param shape shape hint
  * @param brush module brush (solid color or gradient)
  * @param backgroundBrush optional background brush
- * @param pixelShape module shape ([MatrixPixelShape.Default], [MatrixPixelShape.RoundCorners], [MatrixPixelShape.Circle])
+ * @param pixelShape module shape
  * @param quietZone margin around the code in module units (recommended at least 1)
  */
 @Composable
@@ -50,7 +49,7 @@ public class DataMatrixPainter(
     pixelShape: MatrixPixelShape = MatrixPixelShape.Default,
     quietZone: Int = 1,
 ) : MatrixBarcodePainter(
-    matrix = DataMatrixEncoder.encode(data, shape),
+    matrix = QroseEncoders.DataMatrix(shape).encode(data),
     brush = brush,
     backgroundBrush = backgroundBrush,
     pixelShape = pixelShape,

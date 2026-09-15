@@ -21,6 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "QRose"
 include(":qrose")
+include(":qrose-encoder-core")
+include(":qrose-encoder-oned")
+include(":qrose-encoder-matrix")
 include(":qrose-core")
 include(":qrose-oned")
 include(":qrose-matrix")

@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
+import io.github.alexzhirkevich.qrose.QroseEncoders
 
 
 /**
@@ -50,11 +51,6 @@ internal fun rememberCode128Painter(
     }
 }
 
-public enum class Code128Type(internal val v: Int) {
-    A(Code128Encoder.CODE_CODE_A),
-    B(Code128Encoder.CODE_CODE_B),
-    C(Code128Encoder.CODE_CODE_C)
-}
 
 @Stable
 public fun Code128Painter(
@@ -64,7 +60,7 @@ public fun Code128Painter(
     codeSet : Code128Type? = null,
     builder : BarcodePathBuilder= ::defaultBarcodeBuilder
 ): BarcodePainter = BarcodePainter(
-    code = Code128Encoder.encode(data, compact, codeSet),
+    code = QroseEncoders.Code128(compact, codeSet).encode(data),
     brush = brush,
     builder = builder
 )

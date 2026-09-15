@@ -55,9 +55,10 @@ private class AsPixelBallShape(
     private val pixelShape: QrPixelShape
 ) : QrBallShape {
 
+    val matrix = QrCodeMatrix(3, QrCodeMatrix.PixelType.DarkPixel)
+
     override fun Path.path(size: Float, neighbors: Neighbors): Path = apply {
 
-        val matrix = QrCodeMatrix(3, QrCodeMatrix.PixelType.DarkPixel)
 
         repeat(3){ i ->
             repeat(3){ j ->

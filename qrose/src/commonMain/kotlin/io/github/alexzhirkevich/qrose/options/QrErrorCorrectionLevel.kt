@@ -3,8 +3,7 @@
 package io.github.alexzhirkevich.qrose.options
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
-import io.github.alexzhirkevich.qrose.qrcode.ErrorCorrectionLevel
+import io.github.alexzhirkevich.qrose.matrix.qr.QrErrorCorrection
 
 
 /**
@@ -14,31 +13,31 @@ import io.github.alexzhirkevich.qrose.qrcode.ErrorCorrectionLevel
  * */
 @Immutable
 public enum class QrErrorCorrectionLevel(
-    internal val lvl : ErrorCorrectionLevel
+    internal val lvl : QrErrorCorrection
 ) {
 
     /**
      * Minimum possible level will be used.
      * */
-    Auto(ErrorCorrectionLevel.L),
+    Auto(QrErrorCorrection.L),
 
     /**
      * ~7% of QR code can be damaged (or used as logo).
      * */
-    Low(ErrorCorrectionLevel.L),
+    Low(QrErrorCorrection.L),
 
     /**
      * ~15% of QR code can be damaged (or used as logo).
      * */
-    Medium(ErrorCorrectionLevel.M),
+    Medium(QrErrorCorrection.M),
 
     /**
      * ~25% of QR code can be damaged (or used as logo).
      * */
-    MediumHigh(ErrorCorrectionLevel.Q),
+    MediumHigh(QrErrorCorrection.Q),
 
     /**
      * ~30% of QR code can be damaged (or used as logo).
      * */
-    High(ErrorCorrectionLevel.H)
+    High(QrErrorCorrection.H)
 }
