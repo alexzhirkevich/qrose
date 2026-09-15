@@ -1,6 +1,6 @@
 package io.github.alexzhirkevich.qrose
 
 /**
- * The accessor for all encoder factories
+ * The common accessor for all barcode encoder factories
  * */
 object QroseEncoders

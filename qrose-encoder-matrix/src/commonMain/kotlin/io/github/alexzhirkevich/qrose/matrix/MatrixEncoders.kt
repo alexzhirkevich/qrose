@@ -21,7 +21,6 @@ import io.github.alexzhirkevich.qrose.matrix.qr.QrMaskPattern
  * at the cost of a denser code. Defaults to [QrErrorCorrection.L].
  * @param maskPattern the mask pattern applied to the QR code matrix to avoid patterns that
  * are hard for scanners to read. Defaults to [QrMaskPattern.PATTERN000].
- * @return a [MatrixCodeEncoder] configured to produce QR codes with the given parameters.
  */
 fun QroseEncoders.QR(
     errorCorrection: QrErrorCorrection = QrErrorCorrection.L,
@@ -38,7 +37,6 @@ fun QroseEncoders.QR(
  * @param layers the number of layers to use when building the Aztec code.
  * A value of `0` (or the default) lets the encoder automatically determine the number
  * of layers needed based on the encoded data. Defaults to [AztecDefaultLayers].
- * @return a [MatrixCodeEncoder] configured to produce Aztec codes with the given parameters.
  */
 fun QroseEncoders.Aztec(
     minEccPercent: Int = AztecDefaultEcPrecent,
