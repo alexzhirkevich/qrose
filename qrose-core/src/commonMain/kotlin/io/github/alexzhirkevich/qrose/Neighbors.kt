@@ -51,6 +51,12 @@ public class Neighbors(
         result = 31 * result + bottomRight.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "Neighbors(topLeft=$topLeft, topRight=$topRight, left=$left, top=$top, right=$right, bottomLeft=$bottomLeft, bottom=$bottom, bottomRight=$bottomRight)"
+    }
+
+
 }
 public val Neighbors.hasAny : Boolean
     get() = topLeft || topRight || left || top ||
