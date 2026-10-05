@@ -81,9 +81,9 @@ internal class QRCode @JvmOverloads constructor(
 
         val matrix = Matrix2D(modules.size, modules.size)
 
-        for (x in 0 until matrix.width){
-            for (y in 0 until matrix.height){
-                matrix[x,y] = modules[x][y] == true
+        for (row in 0 until moduleCount) {
+            for (col in 0 until moduleCount) {
+                matrix[col, row] = modules[row][col] == true
             }
         }
 
