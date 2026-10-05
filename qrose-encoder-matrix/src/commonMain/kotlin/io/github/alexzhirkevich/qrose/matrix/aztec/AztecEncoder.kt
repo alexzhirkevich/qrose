@@ -112,8 +112,10 @@ internal class AztecEncoder(
             for (i in -center..center) {
                 for (j in -center..center) {
                     if (i % 16 == 0 || j % 16 == 0) {
-                        matrix[center + i, center + j] =
-                            ((center + i) % 2 == 0) xor ((center + j) % 2 == 0)
+                        // Grid modules alternate along each line, and the module at the matrix
+                        // center (an even offset from itself) is dark. Since one of i/j is a
+                        // multiple of 16 (even), a module is dark iff both offsets are even.
+                        matrix[center + i, center + j] = (i % 2 == 0) && (j % 2 == 0)
                     }
                 }
             }
@@ -123,7 +125,7 @@ internal class AztecEncoder(
         drawBullsEye(matrix, matrixSize / 2, if (compact) 5 else 7)
 
         // Draw mode message
-        drawModeMessage(matrix, compact, matrixSize, modeMessage, alignmentMap)
+        drawModeMessage(matrix, compact, matrixSize, modeMessage)
 
         // Draw data spirals
         drawDataSpiral(matrix, compact, layers, alignmentMap, messageBits)
@@ -146,7 +148,7 @@ internal class AztecEncoder(
             when {
                 layers <= 2 -> 6
                 layers <= 8 -> 8
-                layers <= 16 -> 10
+                layers <= 22 -> 10
                 else -> 12
             }
         }
@@ -282,69 +284,35 @@ internal class AztecEncoder(
         matrix[center + size, center + size - 1] = true
     }
 
+    /**
+     * Draws the mode message around the bull's eye.
+     *
+     * Coordinates here are final matrix coordinates (relative to the matrix center) and
+     * must NOT go through the alignment map: the map only translates data-spiral
+     * indices (which don't account for the reference grid lines) into matrix coordinates.
+     */
     private fun drawModeMessage(
         matrix: Matrix2D,
         compact: Boolean,
         matrixSize: Int,
         modeMessage: BooleanArrayList,
-        alignmentMap: IntArray
     ) {
         val center = matrixSize / 2
         if (compact) {
             for (i in 0 until 7) {
                 val offset = center - 3 + i
-                if (modeMessage[i]) {
-                    matrix[
-                        alignmentMap[offset],
-                        alignmentMap[center - 5]
-                    ] = true
-                }
-                if (modeMessage[i + 7]) {
-                    matrix[
-                        alignmentMap[center + 5],
-                        alignmentMap[offset]
-                    ] = true
-                }
-                if (modeMessage[20 - i]) {
-                    matrix[
-                        alignmentMap[offset],
-                        alignmentMap[center + 5]
-                    ] = true
-                }
-                if (modeMessage[27 - i]) {
-                    matrix[
-                        alignmentMap[center - 5],
-                        alignmentMap[offset]
-                    ] = true
-                }
+                if (modeMessage[i]) matrix[offset, center - 5] = true
+                if (modeMessage[i + 7]) matrix[center + 5, offset] = true
+                if (modeMessage[20 - i]) matrix[offset, center + 5] = true
+                if (modeMessage[27 - i]) matrix[center - 5, offset] = true
             }
         } else {
             for (i in 0 until 10) {
                 val offset = center - 5 + i + i / 5
-                if (modeMessage[i]) {
-                    matrix[
-                        alignmentMap[offset],
-                        alignmentMap[center - 7]
-                    ] = true
-                }
-                if (modeMessage[i + 10]) {
-                    matrix[
-                        alignmentMap[center + 7],
-                        alignmentMap[offset]
-                    ] = true
-                }
-                if (modeMessage[29 - i]) {
-                    matrix[
-                        alignmentMap[offset],
-                        alignmentMap[center + 7]
-                    ] = true
-                }
-                if (modeMessage[39 - i]) {
-                    matrix[
-                        alignmentMap[center - 7],
-                        alignmentMap[offset]
-                    ] = true
-                }
+                if (modeMessage[i]) matrix[offset, center - 7] = true
+                if (modeMessage[i + 10]) matrix[center + 7, offset] = true
+                if (modeMessage[29 - i]) matrix[offset, center + 7] = true
+                if (modeMessage[39 - i]) matrix[center - 7, offset] = true
             }
         }
     }

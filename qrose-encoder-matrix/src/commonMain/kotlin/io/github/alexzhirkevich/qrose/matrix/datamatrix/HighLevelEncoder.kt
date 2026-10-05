@@ -40,7 +40,17 @@ internal object HighLevelEncoder {
         val len = context.codewords.size
         context.updateSymbolInfo()
         val capacity = context.symbolInfo!!.dataCapacity
-        if (len < capacity) {
+        // If the data ended while still in C40/Text/X12 mode and the symbol has spare
+        // capacity, the mode must be unlatched. Otherwise the padding that follows would be
+        // decoded as more C40/Text/X12 data (garbage appended to the decoded message).
+        if (len < capacity &&
+            context.encodingMode != ASCII_ENCODATION &&
+            context.encodingMode != BASE256_ENCODATION &&
+            context.encodingMode != EDIFACT_ENCODATION
+        ) {
+            context.writeCodeword(C40_UNLATCH)
+        }
+        if (context.codewords.size < capacity) {
             context.writeCodeword(PAD)
         }
         while (context.codewords.size < capacity) {

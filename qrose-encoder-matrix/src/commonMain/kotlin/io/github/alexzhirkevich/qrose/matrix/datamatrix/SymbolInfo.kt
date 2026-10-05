@@ -70,8 +70,8 @@ internal class SymbolInfo(
             SymbolInfo(true, 10, 11, 32, 8, 14, 6),
             SymbolInfo(true, 16, 14, 26, 12, 24, 10),
             SymbolInfo(true, 22, 18, 36, 12, 16, 10),
-            SymbolInfo(true, 32, 24, 36, 16, 16, 12),
-            SymbolInfo(true, 49, 28, 48, 16, 22, 12)
+            SymbolInfo(true, 32, 24, 36, 16, 16, 14),
+            SymbolInfo(true, 49, 28, 48, 16, 22, 14)
         )
 
         fun lookup(dataCodewords: Int, shape: DataMatrixShape): SymbolInfo {
