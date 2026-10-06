@@ -103,7 +103,7 @@ val qrcodePainter = rememberQrCodePainter(
         )
     },
     frameBrush = QrBrush.solid(Color.Black),
-    logoPainter = rememberQrCodePainter("123"),
+    logoPainter = painterResource(Res.drawable.logo),
     logoPadding = QrLogoPadding.Natural(.1f),
     logoShape = QrLogoShape.circle(),
     logoSize = 0.2f,
@@ -114,7 +114,7 @@ Or with DSL constructor:
 
 
 ```kotlin
-val logoPainter : Painter = painterResource("logo.png")
+val logoPainter : Painter = painterResource(Res.drawable.logo)
 
 val qrcodePainter : Painter = rememberQrCodePainter("https://example.com") {
     logo {
