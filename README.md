@@ -6,17 +6,17 @@
 ![badge-macOS](https://img.shields.io/badge/Platform-macOS-purple)
 ![badge-web](https://img.shields.io/badge/Platform-Web-blue)
 
-QR code and barcode generation library for Compose Multiplatform
+A pure-Kotlin barcode generation library with a customizable graphical implementation for Compose Multiplatform
+
 <img width="465" alt="Screenshot 2023-10-10 at 10 34 05" src="https://github.com/alexzhirkevich/qrose/assets/63979218/7469cc1c-d6fd-4dab-997d-f2604dfa49de">
 
 Why QRose?
-- **Lightweight** - doesn't contain any dependencies except of `compose.ui`.
+- **Lightweight** - doesn't bring any dependencies except of `compose.ui`.
+- **Multiformat** - multiple formats supported: `QR`, `Data Matrix`, `Aztec`, `PDF417`, `UPC`, `EAN`, `Code 128/93/39`, `Codabar`, `ITF`.
+- **Multiplatform** - Encoders are available **for each** Kotlin target. Graphical components are available for all targets supported by the Compose Multiplatform. 
 - **Flexible** - high customization ability that is open for extension.
 - **Efficient** - declare and render codes synchronously right from the composition in 60+ fps.
 - **Scalable** - no raster bitmaps, only scalable vector graphics.
-- **Multiplatform** - supports all the targets supported by Compose Multiplatform. 
-Compose-free encoders are available **for each** Kotlin target.
-- **Multiformat** - multiple formats supported: `QR`, `Data Matrix`, `Aztec`, `PDF417`, `UPC`, `EAN`, `Code 128/93/39`, `Codabar`, `ITF`.
 
 # Installation
 
@@ -27,11 +27,11 @@ Compose-free encoders are available **for each** Kotlin target.
 qrose="<version>"
 
 [libraries]
-# For QR codes
+# For QR code painter
 qrose-qr = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
-# For 2D matrix & stacked codes (Data Matrix, Aztec, PDF417)
+# For 2D matrix & stacked code painters (Data Matrix, Aztec, PDF417)
 qrose-matrix = { module = "io.github.alexzhirkevich:qrose-matrix", version.ref = "qrose" }
-# For single-dimension barcodes (UPC, EAN, Code128, ...)
+# For single-dimension barcode painters (UPC, EAN, Code128, ...)
 qrose-oned = { module = "io.github.alexzhirkevich:qrose-oned", version.ref = "qrose" }
 ```
 
