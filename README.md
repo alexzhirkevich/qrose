@@ -95,11 +95,11 @@ val qrcodePainter = rememberQrCodePainter(
     ballShape = QrBallShape.circle(),
     darkPixelShape = QrPixelShape.roundCorners(),
     frameShape = QrFrameShape.roundCorners(.25f),
-    darkBrush = QrBrush.brush {
+    darkBrush = QrBrush.brush { size ->
         Brush.linearGradient(
             0f to Color.Red,
             1f to Color.Blue,
-            end = Offset(it, it)
+            end = Offset(size, size)
         )
     },
     frameBrush = QrBrush.solid(Color.Black),
@@ -130,11 +130,11 @@ val qrcodePainter : Painter = rememberQrCodePainter("https://example.com") {
         frame = QrFrameShape.roundCorners(.25f)
     }
     colors {
-        dark = QrBrush.brush {
+        dark = QrBrush.brush { size ->
             Brush.linearGradient(
                 0f to Color.Red,
                 1f to Color.Blue,
-                end = Offset(it, it)
+                end = Offset(size, size)
             )
         }
         frame = QrBrush.solid(Color.Black)
