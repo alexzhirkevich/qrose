@@ -27,6 +27,7 @@ internal class QRCode @JvmOverloads constructor(
     }
 
     companion object {
+        private const val MAX_QR_VERSION = 40
         private const val PAD0 = 0xEC
         private const val PAD1 = 0x11
 
@@ -47,10 +48,14 @@ internal class QRCode @JvmOverloads constructor(
             }
             val dataLength = qrCodeData.length()
 
+            val fits = { type: Int ->
+                dataLength <= QRUtil.getMaxLength(type, dataType, errorCorrectionLevel)
+            }
+
             return (1..errorCorrectionLevel.maxTypeNum)
-                .firstOrNull {
-                    dataLength <= QRUtil.getMaxLength(it, dataType, errorCorrectionLevel)
-                } ?: 40
+                .firstOrNull(fits)
+                ?: (errorCorrectionLevel.maxTypeNum + 1..MAX_QR_VERSION).firstOrNull(fits)
+                ?: MAX_QR_VERSION
         }
     }
 
