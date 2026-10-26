@@ -260,7 +260,43 @@ internal object QRUtil {
             intArrayOf(4134, 2506, 1722, 1060),
             intArrayOf(2949, 1787, 1228, 756),
             intArrayOf(2301, 1394, 958, 590)
-        )
+        ),
+        arrayOf(
+            intArrayOf(5529, 3351, 2303, 1417),
+            intArrayOf(4343, 2632, 1809, 1113),
+            intArrayOf(3081, 1867, 1283, 790),
+            intArrayOf(2361, 1431, 983, 605)
+        ),
+        arrayOf(
+            intArrayOf(5836, 3537, 2431, 1496),
+            intArrayOf(4588, 2780, 1911, 1176),
+            intArrayOf(3244, 1966, 1351, 832),
+            intArrayOf(2524, 1530, 1051, 647)
+        ),
+        arrayOf(
+            intArrayOf(6153, 3729, 2563, 1577),
+            intArrayOf(4775, 2894, 1989, 1224),
+            intArrayOf(3417, 2071, 1423, 876),
+            intArrayOf(2625, 1591, 1093, 673)
+        ),
+        arrayOf(
+            intArrayOf(6479, 3927, 2699, 1661),
+            intArrayOf(5039, 3054, 2099, 1292),
+            intArrayOf(3599, 2181, 1499, 923),
+            intArrayOf(2735, 1658, 1139, 701)
+        ),
+        arrayOf(
+            intArrayOf(6743, 4087, 2809, 1729),
+            intArrayOf(5313, 3220, 2213, 1362),
+            intArrayOf(3791, 2298, 1579, 972),
+            intArrayOf(2927, 1774, 1219, 750)
+        ),
+        arrayOf(
+            intArrayOf(7089, 4296, 2953, 1817),
+            intArrayOf(5596, 3391, 2331, 1435),
+            intArrayOf(3993, 2420, 1663, 1024),
+            intArrayOf(3057, 1852, 1273, 784)
+        ),
     )
 
     fun getMaxLength(typeNumber: Int, dataType: QRCodeDataType, errorCorrectionLevel: QrErrorCorrection): Int =

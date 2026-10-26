@@ -29,6 +29,7 @@ internal class QRCode @JvmOverloads constructor(
     companion object {
         private const val PAD0 = 0xEC
         private const val PAD1 = 0x11
+        private const val QR_MAX_V = 40
 
         /**
          * Calculates a suitable value for the [dataType] field for you.
@@ -47,10 +48,12 @@ internal class QRCode @JvmOverloads constructor(
             }
             val dataLength = qrCodeData.length()
 
-            return (1..errorCorrectionLevel.maxTypeNum)
-                .firstOrNull {
-                    dataLength <= QRUtil.getMaxLength(it, dataType, errorCorrectionLevel)
-                } ?: 40
+            for (v in 1..QR_MAX_V) {
+                if (dataLength <= QRUtil.getMaxLength(v, dataType, errorCorrectionLevel)) {
+                    return v
+                }
+            }
+            return QR_MAX_V
         }
     }
 

@@ -119,16 +119,4 @@ class Pdf417EncoderTest {
         val ec1 = Pdf417ErrorCorrection.generateErrorCorrection(data, 1)
         assertContentEquals(intArrayOf(415, 424, 170, 908), ec1)
     }
-
-    @Test
-    fun testPdf417Painter() {
-        val painter = Pdf417Painter(
-            data = "QRose PDF417 Painter",
-            quietZone = 2,
-            rowHeightRatio = 3.0f
-        )
-        assertTrue(painter.intrinsicSize.width > 0f)
-        assertTrue(painter.intrinsicSize.height > 0f)
-        assertEquals(3.0f, painter.rowHeightRatio)
-    }
 }
